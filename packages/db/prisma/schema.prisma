@@ -14,52 +14,36 @@ datasource db {
 }
 
 model User {
-  id         Int           @id @default(autoincrement())
-  password   String
-  name       String
-  email      String        @unique
-  createdAt  DateTime      @default(now())
-  workflows  workflow[]
-  credential Credentials[]
+  id          String @id @default(uuid())
+  name        String
+  email       String @unique
+  password    Int
+  workflow    Workflow[]
+  credentails Credentials[]
 }
 
-model workflow {
-  id          Int      @id @default(autoincrement())
-  title       String
-  enabled     Boolean  @default(false)
-  description String?
+
+model Workflow {
+  id          String @id @default(uuid())
+  createAt    DateTime @default(now())
+  updateAt    DateTime @updatedAt
+  active      Boolean
+  name        String
+  isArchived  Boolean
   nodes       Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-}
-
-enum CredentialTypes {
-  TELEGRAM
-  RESEND
-}
-
-model Webhook {
-  id     Int    @id @default(autoincrement())
-  title  String
-  method String
-  path   String
-  header String
-  secret String
+  connections Json
+  user_Id     String
+  user        User @relation(fields: [user_Id], references: [id]) 
+  // settings    IWorkflowSettings?
+  // staticData  IDataObjects?
+  // meta        WorkflowFEMeta?
 }
 
 model Credentials {
-  id        Int             @id @default(autoincrement())
-  title     String
-  platform  CredentialTypes
-  data      Json
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  id          String @id @default(uuid())
+  name        String
+  platfrom    String
+  data        Json
+  user_Id     String
+  user        User @relation(fields: [user_Id], references: [id])
 }
