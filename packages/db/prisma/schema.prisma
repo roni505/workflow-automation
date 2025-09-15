@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum PlatfromType {
+  TELEGRAM
+  RESEND
+}
+
 model User {
   id          String @id @default(uuid())
   name        String
@@ -20,6 +25,7 @@ model User {
   password    Int
   workflow    Workflow[]
   credentails Credentials[]
+  webhook     Webhook[]
 }
 
 
@@ -42,8 +48,19 @@ model Workflow {
 model Credentials {
   id          String @id @default(uuid())
   name        String
-  platfrom    String
+  platfrom    PlatfromType
   data        Json
   user_Id     String
   user        User @relation(fields: [user_Id], references: [id])
+}
+
+model Webhook {
+  id          String @id @default(uuid())
+  name        String
+  method      String
+  path        String
+  header      String
+  secret      Int
+  user_id     String
+  user        User @relation(fields: [user_id], references: [id])
 }
