@@ -1,5 +1,5 @@
 {
-  "name": "@repo/shared",
+  "name": "@repo/types",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -13,6 +13,6 @@
     "@repo/typescript-config": "workspace:*"
   },
   "exports": {
-    "./*": "./src/index.ts"
+    "./workflow": "./src/workflow.ts"
   }
 }

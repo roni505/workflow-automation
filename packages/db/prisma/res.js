@@ -38,14 +38,14 @@
                     "operation": "send",
                     "additionalFields": {}
                 },
-                "type": "n8n-nodes-base.whatsApp",
+                // "type": "n8n-nodes-base.whatsApp",
                 "typeVersion": 1,
-                "position": [
+                // "position": [
                     624,
                     0
                 ],
-                "id": "8f5a5dce-62b9-4dbe-8662-dacdce0a1a86",
-                "name": "Send message",
+                // "id": "8f5a5dce-62b9-4dbe-8662-dacdce0a1a86",
+                // "name": "Send message",
                 "webhookId": "a7449a05-39e6-4c9b-9708-876d7b2ef0da"
             },
             {

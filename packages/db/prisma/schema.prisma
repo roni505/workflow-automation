@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum PlatfromType {
+enum PlatformType {
   TELEGRAM
   RESEND
 }
@@ -31,15 +31,16 @@ model User {
 
 model Workflow {
   id          String @id @default(uuid())
-  createAt    DateTime @default(now())
-  updateAt    DateTime @updatedAt
-  active      Boolean
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  isActive      Boolean
   name        String
   isArchived  Boolean
   nodes       Json
   connections Json
   user_Id     String
   user        User @relation(fields: [user_Id], references: [id]) 
+  // will update as the application grows
   // settings    IWorkflowSettings?
   // staticData  IDataObjects?
   // meta        WorkflowFEMeta?
@@ -48,7 +49,7 @@ model Workflow {
 model Credentials {
   id          String @id @default(uuid())
   name        String
-  platfrom    PlatfromType
+  platform    PlatformType
   data        Json
   user_Id     String
   user        User @relation(fields: [user_Id], references: [id])
