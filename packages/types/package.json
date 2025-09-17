@@ -13,6 +13,10 @@
     "@repo/typescript-config": "workspace:*"
   },
   "exports": {
+    "./validation": "./src/zod/validation.ts",
     "./workflow": "./src/workflow.ts"
+  },
+  "dependencies": {
+    "zod": "^4.1.9"
   }
 }

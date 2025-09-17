@@ -8,15 +8,15 @@ router.post("/workflow", async (req, res) => {
   const body = req.body;
   try {
     // adding data send from frontend to the database
-    const workflow = await prisma.workflow.create({
+    const adding = await prisma.workflow.create({
       data: {
         createdAt: new Date(),
         updatedAt: new Date(),
-        isActive: body.isActive,
+        isActive: body.active,
         name: body.name,
         isArchived: body.isArchived,
-        nodes: body.nodes,
-        connections: body.connection,
+        nodes: {},
+        connections: {},
         user: {
           connect: {
             id: "123",
@@ -24,6 +24,8 @@ router.post("/workflow", async (req, res) => {
         },
       },
     });
+    console.log("Control is here ", adding);
+
     res.json({
       message: "Workflow has been added",
     });

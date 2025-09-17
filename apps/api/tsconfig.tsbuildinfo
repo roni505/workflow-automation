@@ -1,1 +1,1 @@
-{"root":["./src/index.ts","./src/routes/add-credentials.ts","./src/routes/add-workflow.ts","./src/routes/delete-credentials.ts","./src/routes/get-workflow.ts","./src/routes/id-workflow.ts","./src/routes/update-workflow.ts"],"errors":true,"version":"5.9.2"}
+{"root":["./src/index.ts","./src/routes/add-credentials.ts","./src/routes/add-workflow.ts","./src/routes/delete-credentials.ts","./src/routes/get-workflow.ts","./src/routes/id-workflow.ts","./src/routes/update-workflow.ts"],"version":"5.9.2"}
