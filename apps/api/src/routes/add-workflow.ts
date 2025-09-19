@@ -1,5 +1,4 @@
-import { Request, Router } from "express";
-import { WorkFlow } from "@repo/types/workflow";
+import { Router } from "express";
 import { prisma } from "@repo/db";
 
 const router: Router = Router();
@@ -10,8 +9,6 @@ router.post("/workflow", async (req, res) => {
     // adding data send from frontend to the database
     const adding = await prisma.workflow.create({
       data: {
-        createdAt: new Date(),
-        updatedAt: new Date(),
         isActive: body.active,
         name: body.name,
         isArchived: body.isArchived,

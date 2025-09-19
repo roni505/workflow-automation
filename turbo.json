@@ -3,11 +3,10 @@
   "ui": "tui",
   "globalEnv": ["DATABASE_URL"],
   "tasks": {
-  
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**","pacakages/db/dist/**"],
+      "outputs": [".next/**", "!.next/cache/**", "pacakages/db/dist/**"],
       "env": ["DATABASE_URL"]
     },
     "lint": {

@@ -38,7 +38,7 @@ router.post("/login", async (req, res) => {
         user_name: user.name,
         user_email: user.email,
       },
-      JWT_SECRET
+      JWT_SECRET,
     );
     res.json({
       message: "Welcome, please start automating your workflow",

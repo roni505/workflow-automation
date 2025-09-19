@@ -33,7 +33,7 @@ router.post("/auth/signup", async (req, res) => {
         user_name: user.name,
         user_id: user.id,
       },
-      JWT_SECRET
+      JWT_SECRET,
     );
 
     res.json({
