@@ -28,7 +28,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} h-screen w-screen`}
       >
-        {/* <SideBar /> */}
         <main>{children}</main>
       </body>
     </html>
