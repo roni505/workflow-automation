@@ -5,15 +5,19 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
   addEdge,
+  Controls,
+  MiniMap,
+  Background,
+  ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { useState, useCallback } from "react";
-import { Btn } from "@repo/ui/button";
-import { Plus } from "lucide-react";
-import SideBar from "@repo/ui/sidebar";
-import TriggerBtn from "@repo/ui/TriggerBtn";
-import Navbar from "@repo/ui/navbar";
-import AddTrigger from "@repo/ui/add-trigger";
+
+export enum BackgroundVariant {
+  Lines = "lines",
+  Dots = "dots",
+  Cross = "cross",
+}
 
 const initialNodes = [
   { id: "n1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
@@ -21,7 +25,7 @@ const initialNodes = [
 ];
 const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
 
-export default function Home() {
+function WorkFlow() {
   const [isOpen, setIsOpen] = useState(false);
   const [nodes, setNodes] = useState(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
@@ -42,25 +46,26 @@ export default function Home() {
     [],
   );
   return (
-    // <div style={{ width: "100vw", height: "100vh" }}>
-    //   <ReactFlow
-    //     nodes={nodes}
-    //     edges={edges}
-    //     onNodesChange={onNodesChange}
-    //     onEdgesChange={onEdgesChange}
-    //     onConnect={onConnect}
-    //     fitView
-    <div className="flex h-screen w-screen bg-[#ffffff]">
-      <SideBar />
-      <div className="m-3 flex w-screen flex-col items-center justify-between rounded-xl border border-[#e9e9e9]">
-        <Navbar />
-        <div className="flex h-full w-full flex-col items-center justify-center gap-5 rounded-b-xl bg-[#ffffff]">
-          <TriggerBtn isOpen={isOpen} setIsOpen={setIsOpen} />
-          {isOpen ? <AddTrigger /> : ""}
-        </div>
-      </div>
+    <div className="h-full w-full">
+      <ReactFlowProvider>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          fitView
+        />
+        <Controls />
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={12}
+          size={1}
+          color="#d1d5db"
+        />
+      </ReactFlowProvider>
     </div>
-    // />
-    // </div>
   );
 }
+
+export default WorkFlow;
