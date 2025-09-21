@@ -11,8 +11,10 @@ import {
   ReactFlowProvider,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { useState, useCallback } from "react";
-import { ManualNode } from "../components/manual-node";
+import { useState, useCallback, useEffect } from "react";
+import { ManualNode } from "../../components/manual-node";
+import { GmailNode } from "../../components/gmail-node";
+import { useNodeStore } from "../../stores/node-store";
 
 const initialNodes = [
   {
@@ -25,6 +27,7 @@ const initialNodes = [
 
 const nodeTypes = {
   manualNode: ManualNode,
+  gmailNode: GmailNode,
 };
 
 export enum BackgroundVariant {
@@ -41,29 +44,35 @@ export enum BackgroundVariant {
 
 function WorkFlow() {
   // const [isOpen, setIsOpen] = useState(false);
-  const [nodes, setNodes] = useState(initialNodes);
+  // const [nodes, setNodes] = useState(initialNodes);
+  const { iNodes, addNode } = useNodeStore();
   // const [edges, setEdges] = useState(initialEdges);
 
-  // const onNodesChange = useCallback(
-  //   (changes: any) =>
-  //     setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-  //   [],
-  // );
+  // useEffect(() => {
+  //   setNodes(iNodes);
+  // }, [iNodes]);
+
+  const onNodesChange = useCallback(
+    (changes: any) =>
+      // @ts-ignore
+      addNode((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
+    [],
+  );
   // const onEdgesChange = useCallback(
   //   (changes: any) =>
-  //     setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
+  //     setEdges((edgesSnapshot: any) => applyEdgeChanges(changes, edgesSnapshot)),
   //   [],
   // );
   // const onConnect = useCallback(
   //   (params: any) =>
-  //     setEdges((edgesSnapshot) => addEdge(params, edgesSnapshot)),
+  //     setEdges((edgesSnapshot: any) => addEdge(params, edgesSnapshot)),
   //   [],
   // );
   return (
     <div className="h-full w-full">
       <ReactFlowProvider>
         <ReactFlow
-          nodes={nodes}
+          nodes={iNodes}
           // edges={edges}
           nodeTypes={nodeTypes}
           // onNodesChange={onNodesChange}

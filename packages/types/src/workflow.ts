@@ -15,7 +15,7 @@ export interface Node {
   position: number[];
   parameters: Record<string, any>;
   type: string;
-  webHookId: string;
+  webHookId?: string;
 }
 
 export interface User {
