@@ -51,7 +51,7 @@ export default function Home() {
     //     onConnect={onConnect}
     //     fitView
     <div className="flex h-screen w-screen bg-[#ffffff]">
-      <SideBar />
+      {/* <SideBar /> */}
       <div className="m-3 flex w-screen flex-col items-center justify-between rounded-xl border border-[#e9e9e9]">
         <Navbar />
         <div className="flex h-full w-full flex-col items-center justify-center gap-5 rounded-b-xl bg-[#ffffff]">

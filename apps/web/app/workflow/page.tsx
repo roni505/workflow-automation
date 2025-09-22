@@ -13,28 +13,13 @@ import {
 import "@xyflow/react/dist/style.css";
 import { useState, useCallback, useEffect } from "react";
 import { ManualNode } from "../../components/manual-node";
-import { GmailNode } from "../../components/gmail-node";
+import { DynamicNode } from "../../components/dynamic-node";
 import { useNodeStore } from "../../stores/node-store";
-
-const initialNodes = [
-  {
-    id: "node-1",
-    type: "manualNode",
-    position: { x: 0, y: 0 },
-    data: { value: 123 },
-  },
-];
 
 const nodeTypes = {
   manualNode: ManualNode,
-  gmailNode: GmailNode,
+  dynamicNode: DynamicNode,
 };
-
-export enum BackgroundVariant {
-  Lines = "lines",
-  Dots = "dots",
-  Cross = "cross",
-}
 
 // const initialNodes = [
 //   { id: "n1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
@@ -45,7 +30,7 @@ export enum BackgroundVariant {
 function WorkFlow() {
   // const [isOpen, setIsOpen] = useState(false);
   // const [nodes, setNodes] = useState(initialNodes);
-  const { iNodes, addNode } = useNodeStore();
+  const { iNodes, setNode, addNode } = useNodeStore();
   // const [edges, setEdges] = useState(initialEdges);
 
   // useEffect(() => {
@@ -53,10 +38,11 @@ function WorkFlow() {
   // }, [iNodes]);
 
   const onNodesChange = useCallback(
-    (changes: any) =>
+    (changes: any) => {
       // @ts-ignore
-      addNode((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
-    [],
+      setNode((nds: any) => applyNodeChanges(changes, nds));
+    },
+    [setNode],
   );
   // const onEdgesChange = useCallback(
   //   (changes: any) =>
@@ -69,7 +55,7 @@ function WorkFlow() {
   //   [],
   // );
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full bg-[#F7FAFE]">
       <ReactFlowProvider>
         <ReactFlow
           nodes={iNodes}
@@ -87,12 +73,12 @@ function WorkFlow() {
           }}
         />
         <Controls />
-        <Background
+        {/* <Background
           variant={BackgroundVariant.Dots}
           gap={12}
           size={1}
           color="#d1d5db"
-        />
+        /> */}
       </ReactFlowProvider>
     </div>
   );
