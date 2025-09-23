@@ -1,11 +1,11 @@
 "use client";
 
-import { EllipsisVertical, Mouse, Plus } from "lucide-react";
+import { EllipsisVertical, Plus } from "lucide-react";
 import Actions from "./actions";
-import { JSX, useState } from "react";
+import { useState } from "react";
 import { useActionFormStore } from "../stores/action-form-store";
-import GmailIcon from "./icons/gamil";
 import { useNodeStore } from "../stores/node-store";
+import { Handle, Position } from "@xyflow/react";
 
 export function DynamicNode({ id, data }: { id: string; data: any }) {
   const { isActionAdded, setIsActionAdded } = useActionFormStore();
@@ -15,20 +15,6 @@ export function DynamicNode({ id, data }: { id: string; data: any }) {
 
   const currentNode = iNodes.find((node) => node.id === id);
   const nodeToDisplay = currentNode || { actionData: data };
-  // const latestNode = iNodes[iNodes.length - 1]; // last added node
-
-  // const [nodeData, setNodeData] = useState<{
-  //   type: string;
-  //   icon: JSX.Element;
-  //   label: string;
-  //   data: Record<string, string>;
-  // }>({
-  //   type: "noo value",
-  //   icon: <></>,
-  //   label: "noo vlaue",
-  //   data: {},
-  // });
-  console.log("This is data from iNodes:", iNodes);
 
   return (
     <div className="flex flex-col items-center">
@@ -45,6 +31,8 @@ export function DynamicNode({ id, data }: { id: string; data: any }) {
           size={16}
           className="cursor-pointer text-neutral-500 duration-200 hover:text-black"
         />
+        {/* <Handle type="source" position={Position.Top} id="a" /> */}
+        {/* <Handle type="target" position={Position.Bottom} id="b" /> */}
       </div>
       {!isAddStepClicked && (
         <>
@@ -62,16 +50,6 @@ export function DynamicNode({ id, data }: { id: string; data: any }) {
         <Actions
           isAddStepClicked={isActionAdded}
           setIsAddStepClicked={setIsAddStepClicked}
-          // onNodeCreated={(config, formValues) => {
-          //   setNodeData({
-          //     type: config.nodeType,
-          //     icon: config.icon,
-          //     label: config.label,
-          //     data: formValues,
-          //   });
-          //   setIsOpen(false);
-          //   setIsAddStepClicked(true);
-          // }}
         />
       )}
     </div>

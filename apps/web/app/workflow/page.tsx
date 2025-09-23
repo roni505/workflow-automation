@@ -25,45 +25,48 @@ const nodeTypes = {
 //   { id: "n1", position: { x: 0, y: 0 }, data: { label: "Node 1" } },
 //   { id: "n2", position: { x: 0, y: 100 }, data: { label: "Node 2" } },
 // ];
-// const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
+const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
 
 function WorkFlow() {
   // const [isOpen, setIsOpen] = useState(false);
   // const [nodes, setNodes] = useState(initialNodes);
-  const { iNodes, setNode, addNode } = useNodeStore();
-  // const [edges, setEdges] = useState(initialEdges);
+  const { iNodes, iEdge, addNode, addEdge, setNode } = useNodeStore();
+  const [edges, setEdges] = useState(iEdge);
 
   // useEffect(() => {
   //   setNodes(iNodes);
   // }, [iNodes]);
 
-  const onNodesChange = useCallback(
-    (changes: any) => {
-      // @ts-ignore
-      setNode((nds: any) => applyNodeChanges(changes, nds));
-    },
-    [setNode],
-  );
+  // const onNodesChange = useCallback(
+  //   (changes: any) => {
+  //     // @ts-ignore
+  //     setNode((nds: any) => applyNodeChanges(changes, nds));
+  //   },
+  //   [setNode],
+  // );
   // const onEdgesChange = useCallback(
   //   (changes: any) =>
-  //     setEdges((edgesSnapshot: any) => applyEdgeChanges(changes, edgesSnapshot)),
-  //   [],
+  //     setEdges((edgesSnapshot: any) =>
+  //       applyEdgeChanges(changes, edgesSnapshot),
+  //     ),
+  //   [addEdge],
   // );
-  // const onConnect = useCallback(
-  //   (params: any) =>
-  //     setEdges((edgesSnapshot: any) => addEdge(params, edgesSnapshot)),
-  //   [],
-  // );
+  const onConnect = useCallback(
+    (params: any) =>
+      // @ts-ignore
+      setEdges((edgesSnapshot: any) => addEdge(params, edgesSnapshot)),
+    [],
+  );
   return (
     <div className="h-full w-full bg-[#F7FAFE]">
       <ReactFlowProvider>
         <ReactFlow
           nodes={iNodes}
-          // edges={edges}
+          edges={iEdge}
           nodeTypes={nodeTypes}
           // onNodesChange={onNodesChange}
           // onEdgesChange={onEdgesChange}
-          // onConnect={onConnect}
+          onConnect={onConnect}
           fitView
           // defaultViewport={{ x: 0, y: 0, zoom: 1 }}
           fitViewOptions={{

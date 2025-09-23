@@ -6,7 +6,7 @@ import { GmailIcon } from "./icons/gamil";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { DynamicNode } from "./dynamic-node";
-import { NodeData, useNodeStore } from "../stores/node-store";
+import { EdgeState, NodeData, useNodeStore } from "../stores/node-store";
 import { useActionFormStore } from "../stores/action-form-store";
 
 export const actionsData: any = {
@@ -143,7 +143,8 @@ function Actions({
 }: AddStepClicked) {
   const { isActionAdded, setIsActionAdded } = useActionFormStore();
   const [isOpen, setIsOpen] = useState(false);
-  const { iNodes, addNode } = useNodeStore();
+  // store that contains the data of node and edges
+  const { iNodes, iEdge, addNode, addEdge } = useNodeStore();
   const [added, setAdded] = useState(false);
   const [selectedAction, setSelectedAction] = useState("");
   // console.log(actionsData[selectedAction]);
@@ -202,12 +203,28 @@ function Actions({
             };
 
             addNode(newNode);
+
+            const currentNode: any = iNodes[iNodes.length - 1];
+
+            const newEdge: EdgeState = {
+              id: crypto.randomUUID(),
+              source: currentNode.id,
+              sourceHandle: "a", // must match Handle id on source
+              target: newNode.id,
+              targetHandle: "b",
+              type: "smoothstep",
+            };
+
+            addEdge(newEdge);
+            // console.log("This is the edge data:", newEdge);
+            console.log("This is the data of edges:", iEdge);
+            // console.log("This is the iNode data:", iNodes);
+            // console.log("This is the data of the new node:", newNode);
+
             setIsOpen(false);
 
             setIsActionAdded(!isActionAdded);
             setAdded(!added);
-            // @ts-ignore
-            onNodeCreated(data, formData);
           }}
         />
       )}
