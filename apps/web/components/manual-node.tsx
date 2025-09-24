@@ -9,11 +9,11 @@ export function ManualNode() {
   const [isAddStepClicked, setIsAddStepClicked] = useState(false);
   return (
     <div className="flex flex-col items-center">
-      <div className="w-xl group flex cursor-pointer flex-col items-start justify-start rounded-[8px] border border-[#cfcfcf] bg-white duration-200 hover:border hover:border-[#8d60ff] hover:bg-purple-50">
-        <div className="w-full rounded-t-lg border-b border-b-neutral-300 bg-[#EEF4F2] px-4 py-3 text-sm font-medium text-[#1A7020]">
+      <div className="w-xl group flex cursor-pointer flex-col items-start justify-start border border-[#c9c9c9] bg-white shadow-[0_12_2px_0_rgba(48,48,48,0.20)] duration-200 hover:border hover:border-[#8d60ff] hover:bg-purple-50">
+        <div className="w-full border-b border-b-neutral-300 bg-[#EEF4F2] px-4 py-2 text-sm font-medium text-[#1A7020]">
           Execution will start when you click the start exution button
         </div>
-        <div className="flex items-center gap-2 px-4 py-6">
+        <div className="flex items-center gap-2 px-4 py-4">
           <div className="rounded-sm border border-neutral-200 p-1">
             <Mouse size={20} color="#4f17dd" />
           </div>
@@ -24,19 +24,43 @@ export function ManualNode() {
       </div>
       {!isAddStepClicked && (
         <>
-          <div className="h-9 w-px bg-[#4461FE]"></div>
+          <div className="h-9 w-px bg-[#4F17DD]"></div>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="mb-4 flex cursor-pointer items-center gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-1 hover:bg-[#4461FE] hover:text-white"
+            className="group relative mb-4 flex cursor-pointer items-center gap-2 border border-dashed border-[#4F17DD] bg-white px-3 py-1 transition-all duration-200 hover:bg-[#4461FE] hover:text-white"
           >
-            <Plus size={16} />
+            <Plus
+              className="absolute -left-2 -top-2"
+              color="#7843FF"
+              size={13}
+            />
+            <Plus
+              className="absolute -right-2 -top-2"
+              color="#7843FF"
+              size={13}
+            />
+            <Plus
+              className="absolute -bottom-2 -left-2"
+              color="#7843FF"
+              size={13}
+            />
+            <Plus
+              className="absolute -bottom-2 -right-2"
+              color="#7843FF"
+              size={13}
+            />
+            <Plus
+              size={16}
+              strokeWidth={3}
+              className="text-[#4F17DD] transition-all duration-75 group-hover:text-white"
+            />
             Add step
           </button>
         </>
       )}
       {isOpen && (
         <Actions
-          isAddStepClicked={isActionAdded}
+          // isAddStepClicked={isActionAdded}
           setIsAddStepClicked={setIsActionAdded}
         />
       )}

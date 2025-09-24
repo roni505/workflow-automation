@@ -89,26 +89,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
               )}
             </div>
           ))}
-          {/* <div className="flex flex-col gap-1">
-            <label htmlFor="" className="text-base font-medium">
-              Subject
-            </label>
-            <input
-              placeholder="What’s this email about?"
-              value={subject}
-              type="text"
-              className="rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
-              required
-              onChange={(e) => setSubject(e.target.value)}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="" className="text-base font-medium">
-              Message
-            </label>
-          </div> */}
         </div>
-
         <div className="flex justify-end gap-3 pt-3">
           <button
             onClick={() => onClose()}
@@ -147,7 +128,6 @@ function Actions({
   const { iNodes, iEdge, addNode, addEdge } = useNodeStore();
   const [added, setAdded] = useState(false);
   const [selectedAction, setSelectedAction] = useState("");
-  // console.log(actionsData[selectedAction]);
 
   return (
     <div>
@@ -166,6 +146,7 @@ function Actions({
                     setIsOpen(!isOpen);
                     setIsAddStepClicked(!isAddStepClicked);
                     setSelectedAction(key);
+                    setAdded(!added);
                   }}
                   className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-100"
                 >
@@ -197,7 +178,7 @@ function Actions({
             const newNode: NodeData<Record<string, string>> = {
               id: crypto.randomUUID(),
               type: "dynamicNode",
-              position: { x: 0, y: iNodes.length * 100 + 50 },
+              position: { x: 0, y: iNodes.length * 100 + 20 },
               data: formData,
               actionData: actionData,
             };
@@ -224,7 +205,6 @@ function Actions({
             setIsOpen(false);
 
             setIsActionAdded(!isActionAdded);
-            setAdded(!added);
           }}
         />
       )}
