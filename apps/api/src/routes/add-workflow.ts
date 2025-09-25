@@ -5,18 +5,23 @@ const router: Router = Router();
 
 router.post("/workflow", async (req, res) => {
   const body = req.body;
+  console.log(body);
+
+  if (!body) {
+    return res.send("Body is empty from backend");
+  }
   try {
     // adding data send from frontend to the database
     const adding = await prisma.workflow.create({
       data: {
-        isActive: body.active,
+        isActive: body.isActive,
         name: body.name,
         isArchived: body.isArchived,
-        nodes: {},
-        connections: {},
+        nodes: body.iNodes,
+        connections: body.iEdges,
         user: {
           connect: {
-            id: "123",
+            id: "347245f7-fd38-442f-b155-ad0f202d8575",
           },
         },
       },

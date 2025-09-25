@@ -2,7 +2,6 @@ import { Router } from "express";
 import { SignUpSchema } from "@repo/types/validation";
 import jwt from "jsonwebtoken";
 import { prisma } from "@repo/db";
-import { SignUpType } from "@repo/types/validation";
 
 export const JWT_SECRET = "This_is_the_secret";
 
@@ -18,7 +17,7 @@ router.post("/auth/signup", async (req, res) => {
     }
     const { name, email, password } = body.data;
 
-    //   adding data in database
+    //adding data in database
     const user = await prisma.user.create({
       data: {
         name: name,
@@ -41,7 +40,7 @@ router.post("/auth/signup", async (req, res) => {
       jwt: token,
     });
   } catch (error) {
-    console.error("This is the error from signup route");
+    console.error("This is the error from signup route:", error);
   }
 });
 

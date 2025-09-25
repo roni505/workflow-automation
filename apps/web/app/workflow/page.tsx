@@ -58,7 +58,7 @@ function WorkFlow() {
     [],
   );
   return (
-    <div className="h-full w-full bg-[#f4f2f9]">
+    <div className="h-full w-full bg-[#faf9fd]">
       <ReactFlowProvider>
         <ReactFlow
           nodes={iNodes}

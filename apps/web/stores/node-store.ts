@@ -13,7 +13,7 @@ export interface NodeData<T = any> {
   actionData: any;
 }
 
-export interface EdgeState<T = any> {
+export interface EdgeData<T = any> {
   id: string;
   source: string;
   target: string;
@@ -25,7 +25,7 @@ export interface EdgeState<T = any> {
 // interface for nodeState
 interface NodesState {
   iNodes: NodeData[];
-  iEdge: Edge[];
+  iEdges: Edge[];
   addEdge: (edge: Edge) => void;
   setNode?: (node: Node) => void;
   addNode: (node: NodeData) => void;
@@ -34,7 +34,7 @@ interface NodesState {
 }
 
 export const useNodeStore = create<NodesState>((set) => ({
-  iEdge: [],
+  iEdges: [],
   iNodes: [
     {
       id: "node-1",
@@ -55,6 +55,6 @@ export const useNodeStore = create<NodesState>((set) => ({
 
   addEdge: (edge) =>
     set((state) => ({
-      iEdge: [...state.iEdge, edge],
+      iEdges: [...state.iEdges, edge],
     })),
 }));

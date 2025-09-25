@@ -12,7 +12,7 @@ import { Btn } from "@repo/ui/button";
 import { Plus } from "lucide-react";
 import SideBar from "@repo/ui/sidebar";
 import TriggerBtn from "@repo/ui/TriggerBtn";
-import Navbar from "@repo/ui/navbar";
+import Navbar from "../components/navbar";
 import AddTrigger from "@repo/ui/add-trigger";
 
 const initialNodes = [

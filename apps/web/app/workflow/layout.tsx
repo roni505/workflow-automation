@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 // import "./globals.css";
 import SideBar from "@repo/ui/sidebar";
-import NavBar from "@repo/ui/navbar";
+import NavBar from "../../components/navbar";
 
 export default function RootLayouttttt({
   children,

@@ -9,8 +9,8 @@ export function ManualNode() {
   const [isAddStepClicked, setIsAddStepClicked] = useState(false);
   return (
     <div className="flex flex-col items-center">
-      <div className="w-xl group flex cursor-pointer flex-col items-start justify-start border border-[#c9c9c9] bg-white shadow-[0_12_2px_0_rgba(48,48,48,0.20)] duration-200 hover:border hover:border-[#8d60ff] hover:bg-purple-50">
-        <div className="w-full border-b border-b-neutral-300 bg-[#EEF4F2] px-4 py-2 text-sm font-medium text-[#1A7020]">
+      <div className="w-xl group flex cursor-pointer flex-col items-start justify-start border border-[#d5d5d5] bg-white shadow-md shadow-zinc-950/5 duration-200 hover:border hover:border-[#8d60ff] hover:bg-purple-50">
+        <div className="w-full border-b border-b-neutral-300 bg-[#EEF4F2] px-4 py-2 text-xs font-medium text-[#1A7020]">
           Execution will start when you click the start exution button
         </div>
         <div className="flex items-center gap-2 px-4 py-4">
