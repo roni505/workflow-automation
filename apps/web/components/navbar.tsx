@@ -19,6 +19,7 @@ interface SaveWorkFlowType {
   SAVE_WORKFLOW_API: string;
   iNodes: Node[];
   iEdges: Edge[];
+  workflowName: string;
 }
 
 // function to save the workflow
@@ -26,6 +27,7 @@ async function SaveWorkflow({
   SAVE_WORKFLOW_API,
   iNodes,
   iEdges,
+  workflowName,
 }: SaveWorkFlowType) {
   try {
     alert("Post res has been sent");
@@ -33,7 +35,7 @@ async function SaveWorkflow({
       SAVE_WORKFLOW_API,
       {
         isActive: true,
-        name: "From frontend",
+        name: workflowName || "untitled workflow",
         isArchived: false,
         iNodes,
         iEdges,
@@ -93,7 +95,9 @@ function NavBar() {
         />
       </div>
       <button
-        onClick={() => SaveWorkflow({ SAVE_WORKFLOW_API, iNodes, iEdges })}
+        onClick={() =>
+          SaveWorkflow({ SAVE_WORKFLOW_API, iNodes, iEdges, workflowName })
+        }
         className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-dashed border-[#4F17DD] bg-purple-50 px-4 py-2 text-sm font-medium text-neutral-600 duration-200 hover:bg-purple-200 hover:text-[#2d009e]"
       >
         <Plus className="absolute -left-2 -top-2" color="#7843FF" size={13} />

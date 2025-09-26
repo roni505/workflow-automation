@@ -175,10 +175,21 @@ function Actions({
             }
 
             const actionData = actionsData[selectedAction];
+
+            // Account for manual node position + its height + desired spacing
+            const manualNodeHeight = 36; // Approximate height of the manual node
+            const desiredSpacing = 82; // Consistent spacing you want between all nodes
+            const dynamicNodeCount = iNodes.filter(
+              (node) => node.type === "dynamicNode",
+            ).length;
+
             const newNode: NodeData<Record<string, string>> = {
               id: crypto.randomUUID(),
               type: "dynamicNode",
-              position: { x: 0, y: iNodes.length * 100 + 20 },
+              position: {
+                x: 0,
+                y: manualNodeHeight + (dynamicNodeCount + 1) * desiredSpacing,
+              },
               data: formData,
               actionData: actionData,
             };

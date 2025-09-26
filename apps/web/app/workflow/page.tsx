@@ -30,8 +30,8 @@ const initialEdges = [{ id: "n1-n2", source: "n1", target: "n2" }];
 function WorkFlow() {
   // const [isOpen, setIsOpen] = useState(false);
   // const [nodes, setNodes] = useState(initialNodes);
-  const { iNodes, iEdge, addNode, addEdge, setNode } = useNodeStore();
-  const [edges, setEdges] = useState(iEdge);
+  const { iNodes, iEdges, addNode, addEdge, setNode } = useNodeStore();
+  const [edges, setEdges] = useState(iEdges);
 
   // useEffect(() => {
   //   setNodes(iNodes);
@@ -62,7 +62,7 @@ function WorkFlow() {
       <ReactFlowProvider>
         <ReactFlow
           nodes={iNodes}
-          edges={iEdge}
+          edges={iEdges}
           nodeTypes={nodeTypes}
           // onNodesChange={onNodesChange}
           // onEdgesChange={onEdgesChange}
