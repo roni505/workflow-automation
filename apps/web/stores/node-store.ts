@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { Node, Edge } from "@xyflow/react";
+import { FitView } from "@xyflow/react";
 
 // interface for nodeData
 export interface NodeData<T = any> {
