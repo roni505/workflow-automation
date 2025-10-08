@@ -11,7 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@repo/typescript-config": "workspace:*",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "p-cancelable": "^4.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3"

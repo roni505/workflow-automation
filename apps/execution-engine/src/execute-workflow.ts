@@ -1,5 +1,9 @@
 // here will write the execution logic
+import { rejects } from "assert";
+import { setMaxListeners } from "events";
 import express from "express";
+import PCancelable from "p-cancelable";
+import { resolve } from "path";
 
 export type WorkflowExecuteMode = "manual" | "webhook";
 
@@ -52,6 +56,10 @@ export interface IRunData {
 
 export interface IPinData {
   [nodeName: string]: NodeData[];
+}
+
+export interface INodes {
+  [key: string]: INode;
 }
 
 export interface INode {
@@ -247,6 +255,22 @@ export interface IDataObject {
   [key: string]: GenericValue | IDataObject | GenericValue[] | IDataObject[];
 }
 
+export interface IRun {
+  data: IRunExecutionData;
+  /**
+   * @deprecated Use status instead
+   */
+  finished?: boolean;
+  mode: WorkflowExecuteMode;
+  waitTill?: Date | null;
+  startedAt: Date;
+  stoppedAt?: Date;
+  status: ExecutionStatus;
+
+  /** ID of the job this execution belongs to. Only in scaling mode. */
+  jobId?: string;
+}
+
 export interface IWorkflowExecuteAdditionalData {
   // credentialsHelper: ICredentialsHelper;
   executeWorkflow: (
@@ -327,5 +351,80 @@ export class ExecuteWorkflow {
     this.mode = mode;
     this.runExecutionData = runExecutionData;
   }
-  run() {}
+
+  // when using PCancelable method should not be async
+  run(workflow: Workflow, startNode?: INode): PCancelable<IRun> {
+    this.status = "running";
+
+    // get the node to start from
+    if (startNode) {
+      startNode = startNode;
+    } else {
+      startNode = startNode || workflow.getStartNode();
+    }
+
+    // initialize the data for execution
+    const nodeExecutionStack: IExecuteData[] = [
+      {
+        node: startNode,
+        data: {
+          main: [
+            [
+              {
+                json: {},
+              },
+            ],
+          ],
+        },
+        source: null,
+      },
+    ];
+
+    // engine's memory for the workflow
+    // this.runExecutionData object is used to keep track of the workflows
+    this.runExecutionData = {
+      // where the execution will begin
+      startData: {},
+      // collects and persists results
+      resultData: {
+        runData: {},
+        pinData: {},
+      },
+      // live state of the execution loop
+      executionData: {
+        nodeExecutionStack,
+        waitingExecution: {},
+        waitingExecutionSource: {},
+      },
+    };
+    return this.processRunExecutionData(workflow);
+  }
+
+  getStartNode(workflow: Workflow) {}
+
+  processRunExecutionData(workFlow: Workflow): PCancelable<IRun> {
+    return new PCancelable(async (resolve, reject, oncancel) => {
+      // this lets as many nodes listen to the abort signal, without getting the MaxListenersExeededWarning
+      setMaxListeners(Infinity, this.abortController.signal);
+
+      oncancel.shouldReject = false;
+
+      oncancel(() => {
+        this.status = "canceled";
+        // this.updateTaskStatusesToCancelled();
+        this.abortController.abort();
+        // const fullRunData = this.getFullRunData(startedAt);
+        // void hooks.runHook("workflowExecuteAfter", [fullRunData]);
+      });
+
+      const returnPromise = (async () => {
+
+        while (condition) {
+          
+        }
+        return;
+      })().then(async () => {});
+      return await returnPromise.then(resolve);
+    });
+  }
 }
