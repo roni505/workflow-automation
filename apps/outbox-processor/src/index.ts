@@ -1,22 +1,72 @@
 import { Kafka } from "kafkajs";
 import { prisma } from "@repo/db";
+import consumer from "./consumer";
 
 const kafka = new Kafka({
   clientId: "outbox-processor",
-  brokers: ["localhost:9092"],
+  brokers: ["192.168.0.67:9092"], // host IP
 });
 
-const TOPIC_NAME = "workflow-topic";
+export const TOPIC_NAME = "workflow-execution";
+
+// async function test() {
+//   while (1) {
+//     const workflow = await prisma.outbox_workflow.findMany({
+//       where: {},
+//       take: 10,
+//     });
+
+//     console.log("Workflow from the outbox table: ", workflow);
+//   }
+// }
+
+// test();
+// consumer();
+
+async function ensureTopicExists() {
+  const admin = kafka.admin();
+  await admin.connect();
+
+  const topics = await admin.listTopics();
+  if (!topics.includes(TOPIC_NAME)) {
+    console.log(`Topic "${TOPIC_NAME}" does not exist. Creating...`);
+    await admin.createTopics({
+      topics: [
+        {
+          topic: TOPIC_NAME,
+          numPartitions: 3,
+          replicationFactor: 1,
+        },
+      ],
+    });
+    console.log(`Topic "${TOPIC_NAME}" created.`);
+  }
+
+  await admin.disconnect();
+}
 
 async function main() {
-  while (1) {
-    const producer = kafka.producer();
-    await producer.connect();
+  // Ensure topic exists before starting producer loop
+  await ensureTopicExists();
 
+  const producer = kafka.producer();
+  await producer.connect();
+
+  while (true) {
     const workflow = await prisma.outbox_workflow.findMany({
       where: {},
       take: 10,
     });
+
+    if (workflow.length === 0) {
+      await new Promise((res) => setTimeout(res, 1000)); // wait 1s if no workflows
+      continue;
+    }
+
+    console.log(
+      "This is the workflow from the outbox_workflow table:",
+      workflow,
+    );
 
     await producer.send({
       topic: TOPIC_NAME,
@@ -35,4 +85,6 @@ async function main() {
   }
 }
 
-main();
+main().catch((err) => console.error(err));
+
+consumer();

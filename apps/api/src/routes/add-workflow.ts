@@ -21,8 +21,8 @@ router.post("/workflow", async (req, res) => {
           isActive: body.isActive,
           name: body.name,
           isArchived: body.isArchived,
-          nodes: body.iNodes,
-          connections: body.iEdges,
+          nodes: body.nodes,
+          connections: body.connections,
           user: {
             connect: {
               id: "347245f7-fd38-442f-b155-ad0f202d8575",
@@ -30,13 +30,13 @@ router.post("/workflow", async (req, res) => {
           },
         },
       });
-      const outbox_workflow = prisma.outbox_workflow.create({
+      const outbox_workflow = await tx.outbox_workflow.create({
         data: {
           isActive: body.isActive,
           name: body.name,
           isArchived: body.isArchived,
-          nodes: body.iNodes,
-          connections: body.iEdges,
+          nodes: body.nodes,
+          connections: body.connections,
           user: {
             connect: {
               id: "347245f7-fd38-442f-b155-ad0f202d8575",
