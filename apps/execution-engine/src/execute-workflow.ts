@@ -1,430 +1,75 @@
-// here will write the execution logic
-import { rejects } from "assert";
-import { setMaxListeners } from "events";
-import express from "express";
-import PCancelable from "p-cancelable";
-import { resolve } from "path";
+import { Kafka } from "kafkajs";
+import { executeEmailNode } from "./mail";
 
-export type WorkflowExecuteMode = "manual" | "webhook";
+const kafka = new Kafka({
+  clientId: "outbox-processor",
+  brokers: ["192.168.0.67:9092"], // host IP
+});
 
-export interface ISourceData {
-  previousNode: string;
-  previousNodeOutput?: number;
-  previousNodeRun?: number;
-}
+const TOPIC_NAME = "execute-workflow";
 
-export interface StartNodeData {
-  name: string;
-  sourceData: ISourceData | null;
-}
+export default async function consumer() {
+  console.log("Control is inside the consumer function");
 
-export const ExecutionStatusList = [
-  "canceled",
-  "crashed",
-  "error",
-  "new",
-  "running",
-  "success",
-  "unknown",
-  "waiting",
-] as const;
+  const consumer = kafka.consumer({ groupId: "execution-group" });
+  await consumer.connect();
+  await consumer.subscribe({
+    topic: TOPIC_NAME,
+    fromBeginning: true,
+  });
 
-export type ExecutionStatus = (typeof ExecutionStatusList)[number];
+  await consumer.run({
+    autoCommit: false,
+    eachMessage: async ({ topic, partition, message }) => {
+      if (!message.value) return;
 
-export type NodeData = { json: Record<string, any> };
+      const workflow = JSON.parse(message.value.toString());
+      console.log(
+        "Workflow received from Kafka:",
+        workflow,
+        "Partition: ",
+        partition,
+        "Offset: ",
+        message.offset,
+      );
 
-export interface ITaskDataConnections {
-  // Key for each input type and because there can be multiple inputs of the same type it is an array
-  // null is also allowed because if we still need data for a later while executing the workflow set temporary to null
-  // the nodes get as input TaskDataConnections which is identical to this one except that no null is allowed.
-  [key: string]: Array<NodeData[] | null>;
-}
+      // await new Promise((r) => setTimeout(r, 3000));
 
-export interface ITaskData {
-  executionTime: number;
-  executionStatus?: ExecutionStatus;
-  data?: ITaskDataConnections;
-  // inputOverride?: ITaskDataConnections;
-  // error?: ExecutionError;
-  // metadata?: ITaskMetadata;
-}
+      for (const node of workflow.nodes.iNodes) {
+        let nodeType = node.type;
 
-export interface IRunData {
-  // node-name: result-data
-  [key: string]: ITaskData[];
-}
+        if (nodeType === "emailNode") {
+          // get credentails
 
-export interface IPinData {
-  [nodeName: string]: NodeData[];
-}
-
-export interface INodes {
-  [key: string]: INode;
-}
-
-export interface INode {
-  id: string;
-  name: string;
-  position: number[];
-  parameters: Record<string, any>;
-  type: string;
-  webHookId?: string;
-}
-
-export interface ITaskDataConnectionsSource {
-  // Key for each input type and because there can be multiple inputs of the same type it is an array
-  // null is also allowed because if we still need data for a later while executing the workflow set temporary to null
-  // the nodes get as input TaskDataConnections which is identical to this one except that no null is allowed.
-  [key: string]: Array<ISourceData | null>;
-}
-
-export interface IExecuteData {
-  data: ITaskDataConnections;
-  // metadata?: ITaskMetadata;
-  node: INode;
-  source: ITaskDataConnectionsSource | null;
-  runIndex?: number;
-}
-
-// Keeps data while workflow gets executed and allows when provided to restart execution
-export interface IWaitingForExecution {
-  // Node name
-  [key: string]: {
-    // Run index
-    [key: number]: ITaskDataConnections;
-  };
-}
-
-export interface IWaitingForExecutionSource {
-  // Node name
-  [key: string]: {
-    // Run index
-    [key: number]: ITaskDataConnectionsSource;
-  };
-}
-
-export interface IRunExecutionData {
-  startData?: {
-    startNodes?: StartNodeData[];
-    destinationNode?: string;
-    originalDestinationNode?: string;
-    // runNodeFilter?: string[];
-  };
-  resultData: {
-    // error?: ExecutionError;
-    runData: IRunData;
-    pinData?: IPinData;
-    lastNodeExecuted?: string;
-    metadata?: Record<string, string>;
-  };
-  executionData?: {
-    // contextData: IExecuteContextData;
-    nodeExecutionStack: IExecuteData[];
-    // metadata: {
-    //   // node-name: metadata by runIndex
-    //   [key: string]: ITaskMetadata[];
-    // };
-    waitingExecution: IWaitingForExecution;
-    waitingExecutionSource: IWaitingForExecutionSource | null;
-  };
-}
-
-export interface IConnection {
-  node: string;
-  type: string;
-  index: number;
-}
-
-export interface ConnectionMapping {
-  [key: string]: IConnection[][];
-}
-
-export interface IConnections {
-  [key: string]: ConnectionMapping;
-}
-
-export interface IWorkflowBase {
-  id: string;
-  name: string;
-  active: boolean;
-  isArchived: boolean;
-  createdAt: Date;
-  startedAt?: Date;
-  updatedAt: Date;
-  nodes: INode[];
-  connections: IConnections;
-  // settings?: IWorkflowSettings;
-  // staticData?: IDataObject;
-  pinData?: IPinData;
-  versionId?: string;
-}
-
-export interface IExecuteWorkflowInfo {
-  code?: IWorkflowBase;
-  id?: string;
-}
-
-export type Workflow = {
-  id: string;
-  name: string;
-  tags?: string[];
-};
-
-// export interface ExecuteWorkflowOptions {
-//   node?: INode;
-//   parentWorkflowId: string;
-//   inputData?: INodeExecutionData[];
-//   loadedWorkflowData?: IWorkflowBase;
-//   loadedRunData?: IWorkflowExecutionDataProcess;
-//   parentWorkflowSettings?: IWorkflowSettings;
-//   parentCallbackManager?: CallbackManager;
-//   doNotWaitToFinish?: boolean;
-//   parentExecution?: RelatedExecution;
-// }
-
-export type Result<T, E = unknown> =
-  | { success: true; data: T }
-  | { success: false; error: E };
-
-export interface INodeExecutionData {
-  json: Record<string, any>; // The main data payload
-  // binary?: Record<string, any>;     // Optional binary data (like files)
-  // error?: Error;                    // Optional error info
-}
-
-export interface IWorkflowExecutionDataProcess {
-  destinationNode?: string;
-  restartExecutionId?: string;
-  executionMode: WorkflowExecuteMode;
-  /**
-   * The data that is sent in the body of the webhook that started this
-   * execution.
-   */
-  executionData?: IRunExecutionData;
-  runData?: IRunData;
-  pinData?: IPinData;
-  retryOf?: string | null;
-  pushRef?: string;
-  startNodes?: StartNodeData[];
-  workflowData: IWorkflowBase;
-  userId?: string;
-  projectId?: string;
-  dirtyNodeNames?: string[];
-  triggerToStartFrom?: {
-    name: string;
-    data?: ITaskData;
-  };
-  // agentRequest?: AiAgentRequest;
-  httpResponse?: express.Response; // Used for streaming responses
-  streamingEnabled?: boolean;
-  startedAt?: Date;
-}
-
-export interface RelatedExecution {
-  executionId: string;
-  workflowId: string;
-}
-
-export interface ExecuteWorkflowOptions {
-  node?: INode;
-  parentWorkflowId: string;
-  inputData?: INodeExecutionData[];
-  loadedWorkflowData?: IWorkflowBase;
-  loadedRunData?: IWorkflowExecutionDataProcess;
-  // parentWorkflowSettings?: IWorkflowSettings;
-  // parentCallbackManager?: CallbackManager;
-  doNotWaitToFinish?: boolean;
-  parentExecution?: RelatedExecution;
-}
-
-export interface ExecuteWorkflowData {
-  executionId: string;
-  data: Array<INodeExecutionData[] | null>;
-  waitTill?: Date | null;
-}
-
-export type GenericValue =
-  | string
-  | object
-  | number
-  | boolean
-  | undefined
-  | null;
-
-export interface IDataObject {
-  [key: string]: GenericValue | IDataObject | GenericValue[] | IDataObject[];
-}
-
-export interface IRun {
-  data: IRunExecutionData;
-  /**
-   * @deprecated Use status instead
-   */
-  finished?: boolean;
-  mode: WorkflowExecuteMode;
-  waitTill?: Date | null;
-  startedAt: Date;
-  stoppedAt?: Date;
-  status: ExecutionStatus;
-
-  /** ID of the job this execution belongs to. Only in scaling mode. */
-  jobId?: string;
-}
-
-export interface IWorkflowExecuteAdditionalData {
-  // credentialsHelper: ICredentialsHelper;
-  executeWorkflow: (
-    workflowInfo: IExecuteWorkflowInfo,
-    additionalData: IWorkflowExecuteAdditionalData,
-    options: ExecuteWorkflowOptions,
-  ) => Promise<ExecuteWorkflowData>;
-  getRunExecutionData: (
-    executionId: string,
-  ) => Promise<IRunExecutionData | undefined>;
-  executionId?: string;
-  restartExecutionId?: string;
-  currentNodeExecutionIndex: number;
-  httpResponse?: express.Response;
-  httpRequest?: express.Request;
-  streamingEnabled?: boolean;
-  restApiUrl: string;
-  instanceBaseUrl: string;
-  setExecutionStatus?: (status: ExecutionStatus) => void;
-  sendDataToUI?: (type: string, data: IDataObject | IDataObject[]) => void;
-  formWaitingBaseUrl: string;
-  webhookBaseUrl: string;
-  webhookWaitingBaseUrl: string;
-  webhookTestBaseUrl: string;
-  // currentNodeParameters?: INodeParameters;
-  executionTimeoutTimestamp?: number;
-  userId?: string;
-  // variables: IDataObject;
-  // logAiEvent: (eventName: AiEvent, payload: AiEventPayload) => void;
-  // parentCallbackManager?: CallbackManager;
-  startRunnerTask<T, E = unknown>(
-    additionalData: IWorkflowExecuteAdditionalData,
-    jobType: string,
-    settings: unknown,
-    // executeFunctions: IExecuteFunctions,
-    inputData: ITaskDataConnections,
-    node: INode,
-    workflow: Workflow,
-    runExecutionData: IRunExecutionData,
-    runIndex: number,
-    itemIndex: number,
-    activeNodeName: string,
-    connectionInputData: INodeExecutionData[],
-    // siblingParameters: INodeParameters,
-    mode: WorkflowExecuteMode,
-    // envProviderState: EnvProviderState,
-    executeData?: IExecuteData,
-  ): Promise<Result<T, E>>;
-}
-export class ExecuteWorkflow {
-  private status: ExecutionStatus = "new";
-  private readonly abortController = new AbortController();
-  timedOut: boolean = false;
-
-  private readonly additionlData: IWorkflowExecuteAdditionalData;
-  private readonly mode: WorkflowExecuteMode;
-  private runExecutionData: IRunExecutionData;
-
-  constructor(
-    additionalData: IWorkflowExecuteAdditionalData,
-    mode: WorkflowExecuteMode,
-    runExecutionData: IRunExecutionData = {
-      startData: {},
-      resultData: {
-        runData: {},
-        pinData: {},
-      },
-      executionData: {
-        // contextData: {},
-        nodeExecutionStack: [],
-        // metadata: {},
-        waitingExecution: {},
-        waitingExecutionSource: {},
-      },
-    },
-  ) {
-    this.additionlData = additionalData;
-    this.mode = mode;
-    this.runExecutionData = runExecutionData;
-  }
-
-  // when using PCancelable method should not be async
-  run(workflow: Workflow, startNode?: INode): PCancelable<IRun> {
-    this.status = "running";
-
-    // get the node to start from
-    if (startNode) {
-      startNode = startNode;
-    } else {
-      startNode = startNode || workflow.getStartNode();
-    }
-
-    // initialize the data for execution
-    const nodeExecutionStack: IExecuteData[] = [
-      {
-        node: startNode,
-        data: {
-          main: [
-            [
-              {
-                json: {},
-              },
-            ],
-          ],
-        },
-        source: null,
-      },
-    ];
-
-    // engine's memory for the workflow
-    // this.runExecutionData object is used to keep track of the workflows
-    this.runExecutionData = {
-      // where the execution will begin
-      startData: {},
-      // collects and persists results
-      resultData: {
-        runData: {},
-        pinData: {},
-      },
-      // live state of the execution loop
-      executionData: {
-        nodeExecutionStack,
-        waitingExecution: {},
-        waitingExecutionSource: {},
-      },
-    };
-    return this.processRunExecutionData(workflow);
-  }
-
-  getStartNode(workflow: Workflow) {}
-
-  processRunExecutionData(workFlow: Workflow): PCancelable<IRun> {
-    return new PCancelable(async (resolve, reject, oncancel) => {
-      // this lets as many nodes listen to the abort signal, without getting the MaxListenersExeededWarning
-      setMaxListeners(Infinity, this.abortController.signal);
-
-      oncancel.shouldReject = false;
-
-      oncancel(() => {
-        this.status = "canceled";
-        // this.updateTaskStatusesToCancelled();
-        this.abortController.abort();
-        // const fullRunData = this.getFullRunData(startedAt);
-        // void hooks.runHook("workflowExecuteAfter", [fullRunData]);
-      });
-
-      const returnPromise = (async () => {
-
-        while (condition) {
-          
+          // email node execution
+          await executeEmailNode(workflow);
         }
-        return;
-      })().then(async () => {});
-      return await returnPromise.then(resolve);
-    });
-  }
+        if (nodeType === "telegramNode") {
+          // telegram node execution
+          await executeTelegramNode(workflow);
+        }
+        if (nodeType === "ai-agentNode") {
+          // ai agent node execution
+          await executeAiAgentNode(workflow);
+        }
+      }
+
+      // use :- next message the consumer should read when it resumes
+      consumer.commitOffsets([
+        {
+          topic: TOPIC_NAME,
+          partition: partition,
+          // when resumed the exact logged message is again logged
+          // beacuse here the last offset + 1 is added
+          offset: parseInt(message.offset + 1).toString(),
+        },
+      ]);
+    },
+  });
 }
+
+// console.log("control is inside the consumer file");
+
+// export default function consumer() {
+//   console.log("control is inside the consume file");
+// }

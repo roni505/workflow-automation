@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  Component,
-  Download,
-  Folder,
-  Plus,
-  Waypoints,
-  Workflow,
-} from "lucide-react";
+import { Component, Download, Plus, Waypoints } from "lucide-react";
 import { useState } from "react";
-import { EdgeData, NodeData, useNodeStore } from "../stores/node-store";
+import { useNodeStore } from "../stores/node-store";
 import axios from "axios";
 import { Edge, Node } from "@xyflow/react";
 

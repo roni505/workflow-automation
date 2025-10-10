@@ -15,7 +15,8 @@ datasource db {
 
 enum PlatformType {
   TELEGRAM
-  RESEND
+  MAIL
+  AI_AGENT
 }
 
 model User {

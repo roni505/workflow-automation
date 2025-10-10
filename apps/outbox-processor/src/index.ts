@@ -1,6 +1,5 @@
 import { Kafka } from "kafkajs";
 import { prisma } from "@repo/db";
-import consumer from "./consumer";
 
 const kafka = new Kafka({
   clientId: "outbox-processor",
@@ -63,10 +62,10 @@ async function main() {
       continue;
     }
 
-    console.log(
-      "This is the workflow from the outbox_workflow table:",
-      workflow,
-    );
+    // console.log(
+    //   "This is the workflow from the outbox_workflow table:",
+    //   workflow,
+    // );
 
     await producer.send({
       topic: TOPIC_NAME,
@@ -87,4 +86,4 @@ async function main() {
 
 main().catch((err) => console.error(err));
 
-consumer();
+// consumer();

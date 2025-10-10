@@ -18,6 +18,7 @@ export const actionsData: any = {
     nodeType: "telegramNode",
     formTitle: "Telegram Action",
     formDescription: "Tell us who to send the email to and what it should say",
+    credentialType: "telegram",
   },
   gmail: {
     label: "Gmail",
@@ -27,6 +28,7 @@ export const actionsData: any = {
     nodeType: "gmailNode",
     formTitle: "Gmail Action",
     formDescription: "Enter the ID and the message you want to send",
+    credentialType: "gmail",
   },
   AI_Agent: {
     label: "AI Agent",
@@ -36,6 +38,22 @@ export const actionsData: any = {
     nodeType: "aiAgentNode",
     formTitle: "AI Agent Action",
     formDescription: "Enter the ID and the message you want to send",
+    credentialType: "ai-agent",
+  },
+};
+
+export const credentialsData = {
+  telegram: {
+    label: "Telegram",
+    fields: ["Bot Token", "Chat ID"],
+  },
+  gmail: {
+    label: "Gmail",
+    fields: ["Email", "App Password"],
+  },
+  aiAgent: {
+    label: "AI Agent",
+    fields: ["API Key", "Model"],
   },
 };
 
@@ -52,6 +70,12 @@ function Modal({ choosenAction, onClose }: ModalProps) {
     setFormValues((prev) => ({ ...prev, [field]: vlaue }));
   };
 
+  // Dummy credentials (replace with API data later)
+  const availableCredentials = [
+    { id: "cred1", name: "My Gmail Credential" },
+    { id: "cred2", name: "My Telegram Bot" },
+  ];
+
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="w-md flex flex-col gap-5 rounded-xl border border-neutral-400 bg-white px-6 py-6 shadow-lg">
@@ -62,6 +86,9 @@ function Modal({ choosenAction, onClose }: ModalProps) {
           <span className="text-sm text-neutral-600">
             {choosenAction.formDescription}
           </span>
+        </div>
+        <div>
+          <label htmlFor="">Credentail to connect with</label>
         </div>
         <div className="flex flex-col gap-3">
           {choosenAction.feilds.map((field: any) => (

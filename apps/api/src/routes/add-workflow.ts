@@ -21,8 +21,8 @@ router.post("/workflow", async (req, res) => {
           isActive: body.isActive,
           name: body.name,
           isArchived: body.isArchived,
-          nodes: body.nodes,
-          connections: body.connections,
+          nodes: body.iNodes,
+          connections: body.iEdges,
           user: {
             connect: {
               id: "347245f7-fd38-442f-b155-ad0f202d8575",
@@ -35,8 +35,8 @@ router.post("/workflow", async (req, res) => {
           isActive: body.isActive,
           name: body.name,
           isArchived: body.isArchived,
-          nodes: body.nodes,
-          connections: body.connections,
+          nodes: body.iNodes,
+          connections: body.iEdges,
           user: {
             connect: {
               id: "347245f7-fd38-442f-b155-ad0f202d8575",

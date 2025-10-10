@@ -10,11 +10,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@repo/db": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "express": "^5.1.0",
+    "kafkajs": "^2.2.4",
+    "nodemailer": "^7.0.9",
     "p-cancelable": "^4.0.1"
   },
   "devDependencies": {
-    "@types/express": "^5.0.3"
+    "@types/express": "^5.0.3",
+    "@types/nodemailer": "^7.0.2"
   }
 }
