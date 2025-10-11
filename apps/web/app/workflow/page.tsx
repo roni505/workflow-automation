@@ -15,6 +15,7 @@ import { useState, useCallback, useEffect } from "react";
 import { ManualNode } from "../../components/manual-node";
 import { DynamicNode } from "../../components/dynamic-node";
 import { useNodeStore } from "../../stores/node-store";
+import { useCredentialsStore } from "../../stores/credentials-store";
 
 const nodeTypes = {
   manualNode: ManualNode,
@@ -32,6 +33,8 @@ function WorkFlow() {
   // const [nodes, setNodes] = useState(initialNodes);
   const { iNodes, iEdges, addNode, addEdge, setNode } = useNodeStore();
   const [edges, setEdges] = useState(iEdges);
+  const { fetchCredentails, credentialData, addCredentails } =
+    useCredentialsStore();
 
   // useEffect(() => {
   //   setNodes(iNodes);
@@ -57,6 +60,13 @@ function WorkFlow() {
       setEdges((edgesSnapshot: any) => addEdge(params, edgesSnapshot)),
     [],
   );
+
+  // fetch data the database
+  useEffect(() => {
+    fetchCredentails();
+    // console.log("This are the credentials: ", credentialData);
+  }, []);
+
   return (
     <div className="h-full w-full bg-[#faf9fd]">
       <ReactFlowProvider>

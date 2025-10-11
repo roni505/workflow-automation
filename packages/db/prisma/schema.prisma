@@ -13,12 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum PlatformType {
-  TELEGRAM
-  MAIL
-  AI_AGENT
-}
-
 model User {
   id          String @id @default(uuid())
   name        String
@@ -68,7 +62,7 @@ model Outbox_workflow {
 model Credentials {
   id          String @id @default(uuid())
   name        String
-  platform    PlatformType
+  platform    String
   data        Json
   user_Id     String
   user        User @relation(fields: [user_Id], references: [id])

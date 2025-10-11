@@ -42,7 +42,6 @@ export interface Credentials {
   platform: string;
   data: Record<string, any>;
   user_id: string;
-  user: string;
 }
 
 export interface Connection {

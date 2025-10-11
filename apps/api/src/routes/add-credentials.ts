@@ -1,11 +1,13 @@
 import { Router } from "express";
 import { prisma } from "@repo/db";
 
-const router = Router();
+const router: Router = Router();
 
 router.post("/credentials", async (req, res) => {
   const body = req.body;
   const user_id = req.user_id;
+
+  console.log(body);
 
   await prisma.credentials.create({
     data: {
@@ -24,3 +26,5 @@ router.post("/credentials", async (req, res) => {
     message: "Credentails created and added",
   });
 });
+
+export default router;
