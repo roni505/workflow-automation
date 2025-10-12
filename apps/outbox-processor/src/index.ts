@@ -1,5 +1,6 @@
 import { Kafka } from "kafkajs";
 import { prisma } from "@repo/db";
+// import consumer from "./consumer";
 
 const kafka = new Kafka({
   clientId: "outbox-processor",

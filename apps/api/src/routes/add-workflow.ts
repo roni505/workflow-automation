@@ -15,7 +15,7 @@ router.post("/workflow", async (req, res) => {
     // adding data, send from frontend to the database
     // we are using outbox architecture pattern here
     // uisng this pattern ensures atomicity (making sure that all actions happens or nothing happens)
-    const adding = await prisma.$transaction(async (tx) => {
+    const dbResult = await prisma.$transaction(async (tx) => {
       const workflow = await tx.workflow.create({
         data: {
           isActive: body.isActive,
@@ -44,11 +44,14 @@ router.post("/workflow", async (req, res) => {
           },
         },
       });
+      console.log("This is the output of the outbox_table", outbox_workflow);
+      return { workflow, outbox_workflow };
     });
-    console.log("Control is here ", adding);
+    console.log("Control is here ", dbResult);
 
     res.json({
       message: "Workflow has been added",
+      dbResult,
     });
   } catch (error) {
     console.error("This is the error:", error);

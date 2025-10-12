@@ -33,22 +33,22 @@
 
 //       await new Promise((r) => setTimeout(r, 3000));
 
-//       for (const node of workflow.nodes.iNodes) {
-//         let nodeType = node.type;
+//       //   for (const node of workflow.nodes.iNodes) {
+//       //     let nodeType = node.type;
 
-//         if (nodeType === "emailNode") {
-//           // email node execution
-//           // await executeEmailNode(workflow);
-//         }
-//         if (nodeType === "telegramNode") {
-//           // telegram node execution
-//           // await executeTelegramNode(workflow);
-//         }
-//         if (nodeType === "ai-agentNode") {
-//           // ai agent node execution
-//           // await executeAiAgentNode(workflow);
-//         }
-//       }
+//       //     if (nodeType === "emailNode") {
+//       //       // email node execution
+//       //       // await executeEmailNode(workflow);
+//       //     }
+//       //     if (nodeType === "telegramNode") {
+//       //       // telegram node execution
+//       //       // await executeTelegramNode(workflow);
+//       //     }
+//       //     if (nodeType === "ai-agentNode") {
+//       //       // ai agent node execution
+//       //       // await executeAiAgentNode(workflow);
+//       //     }
+//       //   }
 
 //       // use :- next message the consumer should read when it resumes
 //       consumer.commitOffsets([
@@ -66,6 +66,6 @@
 
 // console.log("control is inside the consumer file");
 
-// export default function consumer() {
-//   console.log("control is inside the consume file");
-// }
+// // export default function consumer() {
+// //   console.log("control is inside the consume file");
+// // }
