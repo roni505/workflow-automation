@@ -9,6 +9,8 @@ import { DynamicNode } from "./dynamic-node";
 import { EdgeData, NodeData, useNodeStore } from "../stores/node-store";
 import { useActionFormStore } from "../stores/action-form-store";
 import { useCredentialsStore } from "../stores/credentials-store";
+import axios from "axios";
+import { Credentials } from "@repo/types/workflow";
 
 export const actionsData: any = {
   telegram: {
@@ -61,8 +63,50 @@ export const credentialsData = {
 type ModalProps = {
   // this works beacuse (telegram, whatsapp, ai) all has same structure
   choosenAction: (typeof actionsData)["email"];
-  onClose: (fromData?: Record<string, string>) => void;
+  onClose: (
+    fromData?: Record<string, string>,
+    selectedCredentialId?: string,
+  ) => void;
 };
+
+type CredentialType = keyof typeof credentialsData;
+
+async function saveNewCredential(
+  formData: Record<string, string>,
+  choosenAction: any,
+  addCredentails: (newCredential: Credentials) => void,
+) {
+  try {
+    let name;
+    if (formData.email) {
+      name = `${choosenAction.label} (${formData.email})`;
+    } else if (formData.email) {
+      name = `${choosenAction.label} (${formData.chatId})`;
+    } else if (formData.email) {
+      name = `${choosenAction.label} (${formData.model})`;
+    }
+    console.log("This is the name of the credData that we are sending: ", name);
+
+    const res = await axios.post(
+      "http://localhost:8080/api/v0/credentials",
+      {
+        name: "Email account",
+        platform: choosenAction.credentialType.toUpperCase(),
+        data: formData,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    const data = await res.data;
+    addCredentails(data.addedCredentails);
+    console.log("New credential added: ", data);
+  } catch (error) {
+    console.error("Failed sending new credential data.", error);
+  }
+}
 
 function Modal({ choosenAction, onClose }: ModalProps) {
   const [formValues, setFormValues] = useState<Record<string, string>>({});
@@ -70,6 +114,9 @@ function Modal({ choosenAction, onClose }: ModalProps) {
     useCredentialsStore();
   const [dropDown, setDropDown] = useState(false);
   const [newCredential, setNewCredential] = useState(false);
+  const [credentialFormValues, setCredentialFormValues] = useState<
+    Record<string, string>
+  >({});
 
   console.log(credentialData);
 
@@ -77,9 +124,16 @@ function Modal({ choosenAction, onClose }: ModalProps) {
     setFormValues((prev) => ({ ...prev, [field]: vlaue }));
   };
 
+  const handleCredentialChange = (field: string, value: string) => {
+    setCredentialFormValues((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const credentialType: CredentialType = choosenAction.credentialType;
+  const credentialConfig = credentialsData[credentialType];
+
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      {newCredential ? (
+      {!newCredential ? (
         <div className="w-md flex flex-col gap-5 rounded-xl border border-neutral-400 bg-white px-6 py-6 shadow-lg">
           <div className="flex flex-col gap-2">
             <span className="text-2xl font-medium">
@@ -100,7 +154,11 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                 onClick={() => setDropDown(!dropDown)}
               >
                 <span className="absolute top-1.5 w-full">
-                  Choose credentials
+                  {credentialFormValues.selectedCredential
+                    ? credentialData.find(
+                        (c) => c.id === credentialFormValues.selectedCredential,
+                      )?.name
+                    : "Choose credentials"}
                 </span>
                 {dropDown && (
                   <div className="absolute -right-0.5 top-10 w-[calc(100%+3px)] rounded-lg border border-neutral-100 bg-white shadow-[0px_2px_12px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
@@ -108,6 +166,17 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                       {credentialData.map((cred) => {
                         return (
                           <div
+                            onClick={() => {
+                              console.log(
+                                "This is the data of the credentialFormValues: ",
+                                credentialFormValues,
+                              );
+
+                              setCredentialFormValues({
+                                selectedCredential: cred.id,
+                              });
+                              setDropDown(false);
+                            }}
                             key={cred.id}
                             className="cursor-pointer rounded-lg px-2 py-2 text-sm hover:bg-neutral-100"
                           >
@@ -168,7 +237,9 @@ function Modal({ choosenAction, onClose }: ModalProps) {
               Cancel
             </button>
             <button
-              onClick={() => onClose(formValues)}
+              onClick={() =>
+                onClose(formValues, credentialFormValues.selectedCredential)
+              }
               className="rounded-lg bg-neutral-200 px-8 py-2 hover:bg-neutral-300"
             >
               Done
@@ -179,14 +250,64 @@ function Modal({ choosenAction, onClose }: ModalProps) {
         <div className="w-md flex flex-col gap-5 rounded-xl border border-neutral-400 bg-white px-6 py-6 shadow-lg">
           <div className="flex flex-col gap-2">
             <span className="text-2xl font-medium">
-              Add new credentails
-              {/* {choosenAction.formTitle} */}
+              Add new {credentialConfig.label} credentails
             </span>
             <span className="text-sm text-neutral-600">
-              {choosenAction.formDescription}
+              Enter details for your {credentialConfig.label} integration
             </span>
           </div>
-          <button onClick={() => setNewCredential(!newCredential)}>Save</button>
+          <div className="flex flex-col gap-3">
+            {credentialConfig.fields.map((field: any) => (
+              <div className="flex flex-col gap-1">
+                <label htmlFor="" className="text-base font-medium">
+                  {field}
+                </label>
+                {field === "message" || field === "prompt" ? (
+                  <textarea
+                    value={credentialFormValues[field] || ""}
+                    placeholder="Type your message..."
+                    className="h-36 rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                    required
+                    onChange={(e) =>
+                      handleCredentialChange(field, e.target.value)
+                    }
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={credentialFormValues[field] || ""}
+                    placeholder="recipient@gmail.com"
+                    className="rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                    required
+                    onChange={(e) =>
+                      handleCredentialChange(field, e.target.value)
+                    }
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end gap-3 pt-3">
+            <button
+              onClick={() => onClose()}
+              className="rounded-lg border border-neutral-300 px-8 py-2 hover:bg-neutral-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => (
+                setNewCredential(!newCredential),
+                saveNewCredential(
+                  credentialFormValues,
+                  choosenAction,
+                  addCredentails,
+                )
+              )}
+              className="rounded-lg bg-neutral-200 px-8 py-2 hover:bg-neutral-300"
+            >
+              Done
+            </button>
+          </div>
         </div>
       )}
     </div>,
@@ -253,8 +374,9 @@ function Actions({
       {isOpen && (
         <Modal
           choosenAction={actionsData[selectedAction]}
-          onClose={(formData) => {
-            if (!formData) {
+          onClose={(formData, selectedCredentialId) => {
+            // return if any of the values are missing
+            if (!formData || !selectedCredentialId) {
               return;
             }
 
@@ -276,6 +398,7 @@ function Actions({
               },
               data: formData,
               actionData: actionData,
+              credentialId: selectedCredentialId,
             };
 
             addNode(newNode);

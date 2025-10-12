@@ -36,6 +36,11 @@ function WorkFlow() {
   const { fetchCredentails, credentialData, addCredentails } =
     useCredentialsStore();
 
+  useEffect(() => {
+    console.log("nodesstate");
+
+    console.log(iNodes);
+  });
   // useEffect(() => {
   //   setNodes(iNodes);
   // }, [iNodes]);

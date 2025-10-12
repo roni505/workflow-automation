@@ -9,7 +9,7 @@ router.post("/credentials", async (req, res) => {
 
   console.log(body);
 
-  await prisma.credentials.create({
+  const addedCredentails = await prisma.credentials.create({
     data: {
       name: body.name,
       platform: body.platform,
@@ -24,6 +24,7 @@ router.post("/credentials", async (req, res) => {
 
   res.json({
     message: "Credentails created and added",
+    addedCredentails,
   });
 });
 

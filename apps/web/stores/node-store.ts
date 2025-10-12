@@ -12,6 +12,7 @@ export interface NodeData<T = any> {
   };
   data: T;
   actionData: any;
+  credentialId: string;
 }
 
 export interface EdgeData<T = any> {
@@ -43,6 +44,7 @@ export const useNodeStore = create<NodesState>((set) => ({
       position: { x: 0, y: 0 },
       data: { value: 123 },
       actionData: "",
+      credentialId: "",
     },
   ],
   setNode: (updater: any) =>
