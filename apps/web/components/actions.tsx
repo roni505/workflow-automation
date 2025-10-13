@@ -401,6 +401,8 @@ function Actions({
               credentialId: selectedCredentialId,
             };
 
+            console.log("This is the form data: ", formData);
+
             addNode(newNode);
 
             const currentNode: any = iNodes[iNodes.length - 1];

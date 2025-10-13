@@ -41,7 +41,7 @@ export interface Credentials {
   name: string;
   platform: string;
   data: Record<string, any>;
-  user_id: string;
+  user_Id: string;
 }
 
 export interface Connection {

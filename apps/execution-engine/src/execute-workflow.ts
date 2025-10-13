@@ -54,49 +54,71 @@ export default async function consumer() {
       if (!message.value) return;
 
       const workflow = JSON.parse(message.value.toString());
-      // console.log(
-      //   "Workflow received from Kafka:",
-      //   workflow,
-      //   "Partition: ",
-      //   partition,
-      //   "Offset: ",
-      //   message.offset,
-      // );
+      console.log(
+        "Workflow received from Kafka:",
+        workflow,
+        "Partition: ",
+        partition,
+        "Offset: ",
+        message.offset,
+      );
 
       // await new Promise((r) => setTimeout(r, 3000));
 
       // validate workflow.nodes
       if (Array.isArray(workflow.nodes)) {
-        console.log("Workflow.nodes is an array", workflow.nodes);
+        // console.log("Workflow.nodes is an array", workflow.nodes);
         const credentialId = workflow.nodes
           .filter((node: any) => node.credentialId)
           .map((node: any) => node.credentialId);
-        console.log("This is the credentail id of the workflow", credentialId);
+        console.log("This are the nodes: ", workflow.nodes);
+
+        // console.log("This is the credentail id of the workflow", credentialId);
+
+        const data = workflow.nodes.map((node: any) => node.data);
+        console.log("This is the form data: ", data);
 
         credentialId.forEach(async (element: any) => {
-          await getCredentials(element);
+          const credentialsData = await getCredentials(element);
+
+          if (!credentialsData) {
+            return console.log("Credentials data is empty");
+          }
+
+          for (const node of workflow.nodes) {
+            let nodeType = node.actionData.nodeType;
+
+            console.log("Node type: ", nodeType);
+
+            if (nodeType === "manualNode") {
+              console.log("Yeah your right its a manualNode: ", nodeType);
+            }
+
+            if (nodeType === "dynamicNode") {
+              console.log("Yeah your right its a dynamicNode: ", nodeType);
+            }
+
+            if (nodeType === "gmailNode") {
+              console.log("This is a email node");
+
+              // email node execution
+              await executeEmailNode(workflow, credentialsData);
+            }
+            if (nodeType === "telegramNode") {
+              console.log("This is a telegramNode");
+
+              // telegram node execution
+              // await executeTelegramNode(workflow);
+            }
+            if (nodeType === "aiAgentNode") {
+              console.log("This is an ai-agent node");
+
+              // ai agent node execution
+              // await executeAiAgentNode(workflow);
+            }
+          }
         });
-        // get credentials
-        // const credentialData = await getCredentials(credentialId);
-        // console.log("This is the credential data: ", credentialData);
       }
-
-      // for (const node of workflow.nodes.iNodes) {
-      //   let nodeType = node.type;
-
-      //   if (nodeType === "emailNode") {
-      //     // email node execution
-      //     await executeEmailNode(workflow);
-      //   }
-      //   if (nodeType === "telegramNode") {
-      //     // telegram node execution
-      //     // await executeTelegramNode(workflow);
-      //   }
-      //   if (nodeType === "ai-agentNode") {
-      //     // ai agent node execution
-      //     // await executeAiAgentNode(workflow);
-      //   }
-      // }
 
       // use :- next message the consumer should read when it resumes
       consumer.commitOffsets([
