@@ -1,11 +1,10 @@
 import { Kafka } from "kafkajs";
-import { executeEmailNode } from "./mail";
-import { getCredentials } from "./workflow";
-// import { getCredential } from "./workflow";
+import { getCredentials } from "./workflow/credentials";
+import { executeEmailNode } from "./executors";
 
 const kafka = new Kafka({
   clientId: "outbox-processor",
-  brokers: ["192.168.0.67:9092"], // host IP
+  brokers: ["localhost:9092"],
 });
 
 async function ensureTopicExists() {
@@ -45,7 +44,7 @@ export default async function consumer() {
   await consumer.connect();
   await consumer.subscribe({
     topic: TOPIC_NAME,
-    fromBeginning: true,
+    fromBeginning: false,
   });
 
   await consumer.run({
@@ -76,46 +75,58 @@ export default async function consumer() {
         // console.log("This is the credentail id of the workflow", credentialId);
 
         const data = workflow.nodes.map((node: any) => node.data);
-        console.log("This is the form data: ", data);
+        // console.log("This is the form data: ", data);
 
         credentialId.forEach(async (element: any) => {
           const credentialsData = await getCredentials(element);
+
+          // console.log(
+          //   "This is the credential data outside the loop: ",
+          //   credentialsData,
+          // );
 
           if (!credentialsData) {
             return console.log("Credentials data is empty");
           }
 
+          let previousOutput: any = null;
+
           for (const node of workflow.nodes) {
             let nodeType = node.actionData.nodeType;
+            let output;
 
-            console.log("Node type: ", nodeType);
-
-            if (nodeType === "manualNode") {
-              console.log("Yeah your right its a manualNode: ", nodeType);
-            }
-
-            if (nodeType === "dynamicNode") {
-              console.log("Yeah your right its a dynamicNode: ", nodeType);
-            }
+            // console.log("Node type: ", nodeType);
 
             if (nodeType === "gmailNode") {
-              console.log("This is a email node");
+              // console.log("This is a email node");
+
+              // const emailCredential = credentialsData.find(
+              //   (data) => data.platform,
+              // );
+
+              // console.log(
+              //   "This is the credential data inside the loop: ",
+              //   credentialsData,
+              // );
 
               // email node execution
-              await executeEmailNode(workflow, credentialsData);
+              output = await executeEmailNode(
+                node,
+                credentialsData,
+                previousOutput,
+              );
             }
             if (nodeType === "telegramNode") {
-              console.log("This is a telegramNode");
-
+              // console.log("This is a telegramNode");
               // telegram node execution
               // await executeTelegramNode(workflow);
             }
             if (nodeType === "aiAgentNode") {
-              console.log("This is an ai-agent node");
-
+              // console.log("This is an ai-agent node");
               // ai agent node execution
               // await executeAiAgentNode(workflow);
             }
+            previousOutput = output;
           }
         });
       }

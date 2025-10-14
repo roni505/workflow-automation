@@ -13,7 +13,7 @@ export interface Node {
   id: string;
   name: string;
   position: number[];
-  parameters: Record<string, any>;
+  data: Record<string, any>;
   type: string;
   webHookId?: string;
 }

@@ -12,51 +12,72 @@ import { useCredentialsStore } from "../stores/credentials-store";
 import axios from "axios";
 import { Credentials } from "@repo/types/workflow";
 
+// Field definitions - maps data keys to display labels
+export const fieldDefinitions: Record<string, string> = {
+  // Telegram fields
+  chatId: "Chat ID",
+  botToken: "Bot Token",
+
+  // Gmail fields
+  email: "Email",
+  appPassword: "App Password",
+  sendTo: "Send to",
+  subject: "Subject",
+
+  // AI Agent fields
+  apiKey: "API Key",
+  model: "Model",
+  prompt: "Prompt",
+
+  // Common fields
+  message: "Message",
+};
+
 export const actionsData: any = {
   telegram: {
     label: "Telegram",
     description: "Start run by sending a Telegram message",
     icon: <TelegramIcon />,
-    feilds: ["ChatId", "Message"],
+    fields: ["chatId", "message"], // Use camelCase keys
     nodeType: "telegramNode",
     formTitle: "Telegram Action",
     formDescription: "Tell us who to send the email to and what it should say",
-    credentialType: "telegram",
+    credentialType: "telegramNode",
   },
   gmail: {
     label: "Gmail",
     description: "Start run by sending an email",
     icon: <GmailIcon />,
-    feilds: ["Send to", "Subject", "Message"],
+    fields: ["sendTo", "subject", "message"], // Use camelCase keys
     nodeType: "gmailNode",
     formTitle: "Gmail Action",
     formDescription: "Enter the ID and the message you want to send",
-    credentialType: "gmail",
+    credentialType: "gmailNode",
   },
   AI_Agent: {
     label: "AI Agent",
     description: "Start runs when by sending emails to a unique HTTP requests",
     icon: <Brain size={18} color="#6E11B0" />,
-    feilds: ["Prompt", "Model"],
+    fields: ["prompt", "model"], // Use camelCase keys
     nodeType: "aiAgentNode",
     formTitle: "AI Agent Action",
     formDescription: "Enter the ID and the message you want to send",
-    credentialType: "ai-agent",
+    credentialType: "aiAgentNode",
   },
 };
 
 export const credentialsData = {
-  telegram: {
+  telegramNode: {
     label: "Telegram",
-    fields: ["Bot Token", "Chat ID"],
+    fields: ["name", "botToken", "chatId"],
   },
-  gmail: {
+  gmailNode: {
     label: "Gmail",
-    fields: ["Email", "App Password"],
+    fields: ["name", "email", "appPassword"],
   },
-  aiAgent: {
+  aiAgentNode: {
     label: "AI Agent",
-    fields: ["API Key", "Model"],
+    fields: ["name", "apiKey", "model"],
   },
 };
 
@@ -90,8 +111,8 @@ async function saveNewCredential(
     const res = await axios.post(
       "http://localhost:8080/api/v0/credentials",
       {
-        name: "Email account",
-        platform: choosenAction.credentialType.toUpperCase(),
+        name: formData.name,
+        platform: choosenAction.credentialType,
         data: formData,
       },
       {
@@ -108,6 +129,17 @@ async function saveNewCredential(
   }
 }
 
+// Helper function to get display label for a field
+const getFieldLabel = (fieldKey: string): string => {
+  return fieldDefinitions[fieldKey] || fieldKey;
+};
+
+// Helper function to check if field should be textarea
+const isTextareaField = (fieldKey: string): boolean => {
+  return fieldKey === "message" || fieldKey === "prompt";
+};
+
+// Updated Modal Component
 function Modal({ choosenAction, onClose }: ModalProps) {
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const { fetchCredentails, addCredentails, credentialData } =
@@ -120,8 +152,8 @@ function Modal({ choosenAction, onClose }: ModalProps) {
 
   console.log(credentialData);
 
-  const handleChange = (field: string, vlaue: string) => {
-    setFormValues((prev) => ({ ...prev, [field]: vlaue }));
+  const handleChange = (field: string, value: string) => {
+    setFormValues((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleCredentialChange = (field: string, value: string) => {
@@ -145,7 +177,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
           </div>
           <div className="flex flex-col gap-3">
             <label htmlFor="" className="text-base font-medium">
-              Credentail to connect with
+              Credential to connect with
             </label>
             <div className="relative flex w-full">
               <div
@@ -203,27 +235,31 @@ function Modal({ choosenAction, onClose }: ModalProps) {
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            {choosenAction.feilds.map((field: any) => (
-              <div className="flex flex-col gap-1">
+            {choosenAction.fields.map((fieldKey: string) => (
+              <div key={fieldKey} className="flex flex-col gap-1">
                 <label htmlFor="" className="text-base font-medium">
-                  {field}
+                  {getFieldLabel(fieldKey)}
                 </label>
-                {field === "message" || field === "prompt" ? (
+                {isTextareaField(fieldKey) ? (
                   <textarea
-                    value={formValues[field] || ""}
+                    value={formValues[fieldKey] || ""}
                     placeholder="Type your message..."
                     className="h-36 rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
                     required
-                    onChange={(e) => handleChange(field, e.target.value)}
+                    onChange={(e) => handleChange(fieldKey, e.target.value)}
                   />
                 ) : (
                   <input
                     type="text"
-                    value={formValues[field] || ""}
-                    placeholder="recipient@gmail.com"
+                    value={formValues[fieldKey] || ""}
+                    placeholder={
+                      fieldKey === "email" || fieldKey === "sendTo"
+                        ? "recipient@gmail.com"
+                        : ""
+                    }
                     className="rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
                     required
-                    onChange={(e) => handleChange(field, e.target.value)}
+                    onChange={(e) => handleChange(fieldKey, e.target.value)}
                   />
                 )}
               </div>
@@ -250,37 +286,43 @@ function Modal({ choosenAction, onClose }: ModalProps) {
         <div className="w-md flex flex-col gap-5 rounded-xl border border-neutral-400 bg-white px-6 py-6 shadow-lg">
           <div className="flex flex-col gap-2">
             <span className="text-2xl font-medium">
-              Add new {credentialConfig.label} credentails
+              Add new {credentialConfig.label} credentials
             </span>
             <span className="text-sm text-neutral-600">
               Enter details for your {credentialConfig.label} integration
             </span>
           </div>
           <div className="flex flex-col gap-3">
-            {credentialConfig.fields.map((field: any) => (
-              <div className="flex flex-col gap-1">
+            {credentialConfig.fields.map((fieldKey: string) => (
+              <div key={fieldKey} className="flex flex-col gap-1">
                 <label htmlFor="" className="text-base font-medium">
-                  {field}
+                  {getFieldLabel(fieldKey)}
                 </label>
-                {field === "message" || field === "prompt" ? (
+                {isTextareaField(fieldKey) ? (
                   <textarea
-                    value={credentialFormValues[field] || ""}
+                    value={credentialFormValues[fieldKey] || ""}
                     placeholder="Type your message..."
                     className="h-36 rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
                     required
                     onChange={(e) =>
-                      handleCredentialChange(field, e.target.value)
+                      handleCredentialChange(fieldKey, e.target.value)
                     }
                   />
                 ) : (
                   <input
-                    type="text"
-                    value={credentialFormValues[field] || ""}
-                    placeholder="recipient@gmail.com"
+                    type={fieldKey === "appPassword" ? "password" : "text"}
+                    value={credentialFormValues[fieldKey] || ""}
+                    placeholder={
+                      fieldKey === "email"
+                        ? "your-email@gmail.com"
+                        : fieldKey === "appPassword"
+                          ? "Enter your app password"
+                          : ""
+                    }
                     className="rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
                     required
                     onChange={(e) =>
-                      handleCredentialChange(field, e.target.value)
+                      handleCredentialChange(fieldKey, e.target.value)
                     }
                   />
                 )}

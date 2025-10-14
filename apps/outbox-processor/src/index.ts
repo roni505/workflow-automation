@@ -4,7 +4,7 @@ import { prisma } from "@repo/db";
 
 const kafka = new Kafka({
   clientId: "outbox-processor",
-  brokers: ["192.168.0.67:9092"], // host IP
+  brokers: ["localhost:9092"], // host IP
 });
 
 export const TOPIC_NAME = "workflow-execution";
