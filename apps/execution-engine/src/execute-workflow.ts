@@ -1,6 +1,10 @@
 import { Kafka } from "kafkajs";
 import { getCredentials } from "./workflow/credentials";
-import { executeEmailNode } from "./executors";
+import {
+  executeAiAgentNode,
+  executeEmailNode,
+  executeTelegramNode,
+} from "./executors";
 
 const kafka = new Kafka({
   clientId: "outbox-processor",
@@ -119,12 +123,20 @@ export default async function consumer() {
             if (nodeType === "telegramNode") {
               // console.log("This is a telegramNode");
               // telegram node execution
-              // await executeTelegramNode(workflow);
+              output = await executeTelegramNode(
+                node,
+                credentialsData,
+                previousOutput,
+              );
             }
             if (nodeType === "aiAgentNode") {
               // console.log("This is an ai-agent node");
               // ai agent node execution
-              // await executeAiAgentNode(workflow);
+              output = await executeAiAgentNode(
+                node,
+                credentialsData,
+                previousOutput,
+              );
             }
             previousOutput = output;
           }

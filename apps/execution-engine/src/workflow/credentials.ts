@@ -7,7 +7,7 @@ export async function getCredentials(credentailId: string) {
       id: credentailId,
     },
   });
-  // console.log("This is the data from db", data);
+  console.log("This is the data from db", data);
 
   if (!data) {
     return null;

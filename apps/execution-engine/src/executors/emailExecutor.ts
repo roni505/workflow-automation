@@ -6,17 +6,12 @@ export async function executeEmailNode(
   credentialsData: Credentials[],
   previousOutput?: any,
 ) {
-  // extract the data
-  // const nodesData = workflow.nodes.map((d) => {
-  //   return d.data;
-  // });
-  // console.log("This is the nodesData: ", nodesData);
-
+  // couz we are passing a single node here
   const nodeData = node.data;
 
   console.log("This is nodes data: ", nodeData);
 
-  // fromData
+  // formData
   const { sendTo, message, subject } = node.data;
 
   console.log(
@@ -27,6 +22,10 @@ export async function executeEmailNode(
   // console.log("This is the credentials: ", credentialsData);
   const email = credentialsData[0]?.data.email;
   const appPassword = credentialsData[0]?.data.appPassword;
+
+  if (!email || !appPassword) {
+    return console.log("Email or pass is empty");
+  }
 
   console.log("This is the email: ", email);
   console.log("This is the appPassword: ", appPassword);

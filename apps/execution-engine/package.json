@@ -13,9 +13,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@repo/types": "workspace:*",
+    "@google/genai": "^1.25.0",
     "@repo/db": "workspace:*",
+    "@repo/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "axios": "^1.12.2",
     "express": "^5.1.0",
     "kafkajs": "^2.2.4",
     "nodemailer": "^7.0.9",

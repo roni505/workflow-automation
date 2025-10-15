@@ -3,16 +3,14 @@
 import { Brain, ChevronDown, Plus } from "lucide-react";
 import TelegramIcon from "./icons/telegram";
 import { GmailIcon } from "./icons/gamil";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
-import { DynamicNode } from "./dynamic-node";
 import { EdgeData, NodeData, useNodeStore } from "../stores/node-store";
 import { useActionFormStore } from "../stores/action-form-store";
 import { useCredentialsStore } from "../stores/credentials-store";
 import axios from "axios";
 import { Credentials } from "@repo/types/workflow";
 
-// Field definitions - maps data keys to display labels
 export const fieldDefinitions: Record<string, string> = {
   // Telegram fields
   chatId: "Chat ID",
@@ -38,7 +36,7 @@ export const actionsData: any = {
     label: "Telegram",
     description: "Start run by sending a Telegram message",
     icon: <TelegramIcon />,
-    fields: ["chatId", "message"], // Use camelCase keys
+    fields: ["message"],
     nodeType: "telegramNode",
     formTitle: "Telegram Action",
     formDescription: "Tell us who to send the email to and what it should say",
@@ -48,7 +46,7 @@ export const actionsData: any = {
     label: "Gmail",
     description: "Start run by sending an email",
     icon: <GmailIcon />,
-    fields: ["sendTo", "subject", "message"], // Use camelCase keys
+    fields: ["sendTo", "subject", "message"],
     nodeType: "gmailNode",
     formTitle: "Gmail Action",
     formDescription: "Enter the ID and the message you want to send",
@@ -58,7 +56,7 @@ export const actionsData: any = {
     label: "AI Agent",
     description: "Start runs when by sending emails to a unique HTTP requests",
     icon: <Brain size={18} color="#6E11B0" />,
-    fields: ["prompt", "model"], // Use camelCase keys
+    fields: ["prompt"],
     nodeType: "aiAgentNode",
     formTitle: "AI Agent Action",
     formDescription: "Enter the ID and the message you want to send",
