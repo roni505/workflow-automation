@@ -81,7 +81,7 @@ export default async function consumer() {
         const data = workflow.nodes.map((node: any) => node.data);
         // console.log("This is the form data: ", data);
 
-        credentialId.forEach(async (element: any) => {
+        for (const element of credentialId) {
           const credentialsData = await getCredentials(element);
 
           // console.log(
@@ -140,7 +140,7 @@ export default async function consumer() {
             }
             previousOutput = output;
           }
-        });
+        }
       }
 
       // use :- next message the consumer should read when it resumes

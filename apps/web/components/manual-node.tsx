@@ -2,13 +2,38 @@ import { Mouse, MousePointer2, Plus } from "lucide-react";
 import { useState } from "react";
 import Actions from "./actions";
 import { useActionFormStore } from "../stores/action-form-store";
+import axios from "axios";
+import { useNodeStore, NodeData } from "../stores/node-store";
+import { useWorkflowStore } from "../stores/workflow-store";
+import { WorkFlow } from "@repo/types/workflow";
+
+const SAVE_WORKFLOW_API: string = "http://localhost:8080/api/v0/workflow";
+
+function executeWorkflow(savedWorflow: any) {
+  try {
+    alert("Hey");
+    console.log("This is the id: ", savedWorflow.data.id);
+
+    const response = axios.post(`${SAVE_WORKFLOW_API}/${savedWorflow.data.id}`);
+  } catch (error) {
+    console.error("Failed executing workflow: ", error);
+  }
+}
 
 export function ManualNode() {
   const [isOpen, setIsOpen] = useState(false);
-  const { isActionAdded, setIsActionAdded } = useActionFormStore();
+  const { setIsActionAdded } = useActionFormStore();
   const [isAddStepClicked, setIsAddStepClicked] = useState(false);
+  const { savedWorkflow } = useWorkflowStore();
   return (
-    <div className="flex flex-col items-center">
+    <div
+      onClick={() => {
+        if (savedWorkflow) {
+          executeWorkflow(savedWorkflow);
+        }
+      }}
+      className="flex flex-col items-center"
+    >
       <div className="w-xl group flex cursor-pointer flex-col items-start justify-start border border-[#d5d5d5] bg-white shadow-md shadow-zinc-950/5 duration-200 hover:border hover:border-[#8d60ff] hover:bg-purple-50">
         <div className="w-full border-b border-b-neutral-300 bg-[#EEF4F2] px-4 py-2 text-xs font-medium text-[#1A7020]">
           Execution will start when you click the start exution button

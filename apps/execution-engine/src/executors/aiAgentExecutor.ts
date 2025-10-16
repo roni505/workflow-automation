@@ -8,23 +8,36 @@ export async function executeAiAgentNode(
   credentialsData: Credentials[],
   previousOutput?: any,
 ) {
-  const { prompt } = node.data;
+  try {
+    const { prompt } = node.data;
 
-  const apiKey = credentialsData[0]?.data.apiKey;
-  const model = credentialsData[0]?.data.model;
+    const apiKey = credentialsData[0]?.data.apiKey;
+    const model = credentialsData[0]?.data.model;
 
-  if (!apiKey || !model) {
-    return console.log("API or Model is empty");
+    if (!apiKey || !model) {
+      return console.log("API or Model is empty");
+    }
+
+    const ai = new GoogleGenAI({
+      apiKey: apiKey,
+    });
+
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: prompt,
+    });
+
+    return {
+      success: true,
+      data: {
+        prompt: prompt,
+        response: response.text,
+        model: model,
+        timestamp: new Date().toISOString(),
+      },
+      message: "Response generaled from the llm",
+    };
+  } catch (error) {
+    console.error("Error in AI Agnet executor: ", error);
   }
-
-  const ai = new GoogleGenAI({
-    apiKey: apiKey,
-  });
-
-  const response = await ai.models.generateContent({
-    model: model,
-    contents: prompt,
-  });
-
-  console.log("Res from aiAgent node: ", response.text);
 }

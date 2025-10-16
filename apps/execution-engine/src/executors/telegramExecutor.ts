@@ -32,7 +32,11 @@ export async function executeTelegramNode(
     });
     const data = response.data;
     previousOutput = data;
-    return console.log("This is the res from the telegram post url: ", data);
+    return {
+      success: true,
+      data: response.data,
+      message: "Message sent successfully",
+    };
   } catch (error) {
     console.error("Error in telegramNode executor: ", error);
   }

@@ -16,6 +16,7 @@ import { ManualNode } from "../../components/manual-node";
 import { DynamicNode } from "../../components/dynamic-node";
 import { useNodeStore } from "../../stores/node-store";
 import { useCredentialsStore } from "../../stores/credentials-store";
+import { Button } from "@repo/ui/button";
 
 const nodeTypes = {
   manualNode: ManualNode,
@@ -74,6 +75,13 @@ function WorkFlow() {
 
   return (
     <div className="h-full w-full bg-[#faf9fd]">
+      {/* <div className="w-2xl flex bg-red-500"> */}
+      {/* <Button
+        text="Execute workflow"
+        className="rounded-lg bg-blue-700 px-4 py-2 text-white"
+        children
+      /> */}
+      {/* </div> */}
       <ReactFlowProvider>
         <ReactFlow
           nodes={iNodes}

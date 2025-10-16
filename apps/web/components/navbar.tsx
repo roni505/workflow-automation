@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useNodeStore } from "../stores/node-store";
 import axios from "axios";
 import { Edge, Node } from "@xyflow/react";
+import { useWorkflowStore } from "../stores/workflow-store";
+import { WorkFlow } from "@repo/types/workflow";
 
 const SAVE_WORKFLOW_API: string = "http://localhost:8080/api/v0/workflow";
 
@@ -13,6 +15,7 @@ interface SaveWorkFlowType {
   iNodes: Node[];
   iEdges: Edge[];
   workflowName: string;
+  setWorkflow: (data: WorkFlow) => void;
 }
 
 // function to save the workflow
@@ -21,6 +24,7 @@ async function SaveWorkflow({
   iNodes,
   iEdges,
   workflowName,
+  setWorkflow,
 }: SaveWorkFlowType) {
   try {
     alert("Post res has been sent");
@@ -43,6 +47,7 @@ async function SaveWorkflow({
 
     if (res) {
       const data = await res.data;
+      setWorkflow(data);
       console.log("This is the res from the add workflow api:", data);
     }
     return;
@@ -55,6 +60,7 @@ async function SaveWorkflow({
 function NavBar() {
   const [workflowName, setWorkflowName] = useState("");
   const { iNodes, iEdges, addNode, addEdge } = useNodeStore();
+  const { setWorkflow } = useWorkflowStore();
   return (
     <div className="flex w-full flex-1 items-center justify-between gap-2 rounded-t-xl border-b border-b-neutral-200 bg-white px-20 py-5 text-black">
       {/* <div className="relative"> */}
@@ -89,7 +95,13 @@ function NavBar() {
       </div>
       <button
         onClick={() =>
-          SaveWorkflow({ SAVE_WORKFLOW_API, iNodes, iEdges, workflowName })
+          SaveWorkflow({
+            SAVE_WORKFLOW_API,
+            iNodes,
+            iEdges,
+            workflowName,
+            setWorkflow,
+          })
         }
         className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-dashed border-[#4F17DD] bg-purple-50 px-4 py-2 text-sm font-medium text-neutral-600 duration-200 hover:bg-purple-200 hover:text-[#2d009e]"
       >

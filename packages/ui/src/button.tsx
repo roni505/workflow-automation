@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 
 interface ButtonProps {
   text: string;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 
