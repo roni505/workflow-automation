@@ -1,6 +1,6 @@
 "use client";
 
-import { EllipsisVertical, Plus } from "lucide-react";
+import { EllipsisVertical, Plus, Square } from "lucide-react";
 import Actions from "./actions";
 import { useState } from "react";
 import { useActionFormStore } from "../stores/action-form-store";
@@ -19,13 +19,13 @@ export function DynamicNode({ id, data }: { id: string; data: any }) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="w-xl flex items-center justify-between gap-2 border border-[#dedede] bg-white px-4 py-3 shadow-[0_0_2px_0_rgba(48,48,48,0.20)] duration-200 hover:border hover:border-[#9e9e9e]">
+      <div className="w-xl flex items-center justify-between gap-2 border border-neutral-800 bg-neutral-950 px-4 py-3 shadow-[0_0_2px_0_rgba(48,48,48,0.20)] duration-200 hover:border hover:border-[#9e9e9e]">
         <div className="flex items-center gap-2">
           {/* <span className="px-2 text-neutral-400">1</span> */}
-          <div className="rounded-sm border border-neutral-200 p-1">
+          <div className="border border-neutral-800 p-1">
             {nodeToDisplay?.actionData.icon}
           </div>
-          <span className="text-base text-neutral-700">
+          <span className="text-base text-neutral-300">
             {nodeToDisplay?.actionData.label}
           </span>
         </div>
@@ -39,7 +39,7 @@ export function DynamicNode({ id, data }: { id: string; data: any }) {
       {/* {!isAddStepClicked && (
         <> */}
       <div className="h-9 w-px bg-[#4F17DD]"></div>
-      <button
+      {/* <button
         onClick={() => setIsOpen(!isOpen)}
         className="group relative mb-4 flex cursor-pointer items-center gap-2 border border-dashed border-[#4F17DD] bg-white px-3 py-1 hover:bg-[#4461FE] hover:text-white"
       >
@@ -61,6 +61,27 @@ export function DynamicNode({ id, data }: { id: string; data: any }) {
           className="text-[#4F17DD] transition-all duration-75 group-hover:text-white"
         />
         Add step
+      </button> */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-2 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
+      >
+        <Plus className="absolute -left-1 -top-1 text-neutral-300" size={8} />
+        <Plus className="absolute -right-1 -top-1 text-neutral-300" size={8} />
+        <Plus
+          className="absolute -bottom-1 -left-1 text-neutral-300"
+          size={8}
+        />
+        <Plus
+          className="absolute -bottom-1 -right-1 text-neutral-300"
+          size={8}
+        />
+        <Plus
+          size={16}
+          strokeWidth={3}
+          className="transition-all duration-75 group-hover:text-white"
+        />
+        Add node
       </button>
       {/* </>
       )} */}

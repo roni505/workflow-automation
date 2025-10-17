@@ -162,28 +162,31 @@ function Modal({ choosenAction, onClose }: ModalProps) {
   const credentialConfig = credentialsData[credentialType];
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
       {!newCredential ? (
-        <div className="w-md flex flex-col gap-5 rounded-xl border border-neutral-400 bg-white px-6 py-6 shadow-lg">
+        <div className="w-md flex flex-col gap-5 border border-neutral-800 bg-black px-6 py-6 shadow-lg">
           <div className="flex flex-col gap-2">
-            <span className="text-2xl font-medium">
+            <span className="text-2xl font-medium text-neutral-300">
               {choosenAction.formTitle}
             </span>
-            <span className="text-sm text-neutral-600">
+            <span className="text-sm text-neutral-500">
               {choosenAction.formDescription}
             </span>
           </div>
           <div className="flex flex-col gap-3">
-            <label htmlFor="" className="text-base font-medium">
+            <label
+              htmlFor=""
+              className="text-base font-medium text-neutral-300"
+            >
               Credential to connect with
             </label>
             <div className="relative flex w-full">
               <div
                 id=""
-                className="relative h-10 w-full cursor-pointer appearance-none rounded-lg border border-neutral-300 px-2"
+                className="relative h-10 w-full cursor-pointer appearance-none rounded-sm border border-neutral-700 px-2"
                 onClick={() => setDropDown(!dropDown)}
               >
-                <span className="absolute top-1.5 w-full">
+                <span className="absolute top-2 w-full text-sm text-neutral-500">
                   {credentialFormValues.selectedCredential
                     ? credentialData.find(
                         (c) => c.id === credentialFormValues.selectedCredential,
@@ -191,7 +194,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                     : "Choose credentials"}
                 </span>
                 {dropDown && (
-                  <div className="absolute -right-0.5 top-10 w-[calc(100%+3px)] rounded-lg border border-neutral-100 bg-white shadow-[0px_2px_12px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+                  <div className="absolute -right-0.5 top-10 w-[calc(100%+3px)] rounded-sm border border-neutral-800 bg-black shadow-[0px_2px_12px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
                     <div className="p-1">
                       {credentialData.map((cred) => {
                         return (
@@ -208,7 +211,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                               setDropDown(false);
                             }}
                             key={cred.id}
-                            className="cursor-pointer rounded-lg px-2 py-2 text-sm hover:bg-neutral-100"
+                            className="cursor-pointer rounded-sm px-2 py-2 text-sm text-neutral-300 hover:bg-neutral-950"
                           >
                             {cred.name}
                           </div>
@@ -217,7 +220,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                       <div className="flex items-center justify-center gap-2">
                         <button
                           onClick={() => setNewCredential(!newCredential)}
-                          className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-lg border border-neutral-200 py-2 text-sm text-blue-700 transition-all duration-200 hover:bg-neutral-100"
+                          className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-sm border border-neutral-700 py-2 text-sm text-neutral-300 transition-all duration-200 hover:bg-neutral-950"
                         >
                           <Plus size={16} />
                           Add New
@@ -235,14 +238,17 @@ function Modal({ choosenAction, onClose }: ModalProps) {
           <div className="flex flex-col gap-3">
             {choosenAction.fields.map((fieldKey: string) => (
               <div key={fieldKey} className="flex flex-col gap-1">
-                <label htmlFor="" className="text-base font-medium">
+                <label
+                  htmlFor=""
+                  className="text-base font-medium text-neutral-300"
+                >
                   {getFieldLabel(fieldKey)}
                 </label>
                 {isTextareaField(fieldKey) ? (
                   <textarea
                     value={formValues[fieldKey] || ""}
                     placeholder="Type your message..."
-                    className="h-36 rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                    className="h-36 rounded-sm border border-neutral-700 px-2 py-2 placeholder:text-sm placeholder:text-neutral-500"
                     required
                     onChange={(e) => handleChange(fieldKey, e.target.value)}
                   />
@@ -255,7 +261,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                         ? "recipient@gmail.com"
                         : ""
                     }
-                    className="rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                    className="rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
                     required
                     onChange={(e) => handleChange(fieldKey, e.target.value)}
                   />
@@ -266,7 +272,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
           <div className="flex justify-end gap-3 pt-3">
             <button
               onClick={() => onClose()}
-              className="rounded-lg border border-neutral-300 px-8 py-2 hover:bg-neutral-300"
+              className="rounded-sm border border-neutral-800 px-8 py-2 text-neutral-300 hover:bg-neutral-950"
             >
               Cancel
             </button>
@@ -274,7 +280,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
               onClick={() =>
                 onClose(formValues, credentialFormValues.selectedCredential)
               }
-              className="rounded-lg bg-neutral-200 px-8 py-2 hover:bg-neutral-300"
+              className="rounded-sm bg-neutral-900 px-8 py-2 text-neutral-200 hover:bg-neutral-800"
             >
               Done
             </button>
@@ -300,7 +306,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                   <textarea
                     value={credentialFormValues[fieldKey] || ""}
                     placeholder="Type your message..."
-                    className="h-36 rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                    className="h-36 rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
                     required
                     onChange={(e) =>
                       handleCredentialChange(fieldKey, e.target.value)
@@ -317,7 +323,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                           ? "Enter your app password"
                           : ""
                     }
-                    className="rounded-lg border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                    className="rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
                     required
                     onChange={(e) =>
                       handleCredentialChange(fieldKey, e.target.value)
@@ -330,7 +336,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
           <div className="flex justify-end gap-3 pt-3">
             <button
               onClick={() => onClose()}
-              className="rounded-lg border border-neutral-300 px-8 py-2 hover:bg-neutral-300"
+              className="rounded-sm border border-neutral-300 px-8 py-2 hover:bg-neutral-300"
             >
               Cancel
             </button>
@@ -343,7 +349,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                   addCredentails,
                 )
               )}
-              className="rounded-lg bg-neutral-200 px-8 py-2 hover:bg-neutral-300"
+              className="rounded-sm bg-neutral-200 px-8 py-2 hover:bg-neutral-300"
             >
               Done
             </button>
@@ -377,8 +383,8 @@ function Actions({
   return (
     <div>
       {!added && (
-        <div className="cursor-pointer divide-y divide-neutral-200 rounded-xl border border-neutral-200 bg-white px-2 duration-200">
-          <span className="flex w-full px-4 py-2 text-sm font-medium">
+        <div className="cursor-pointer divide-y divide-neutral-800 border border-neutral-800 bg-black px-2 duration-200">
+          <span className="flex w-full px-4 py-2 text-sm font-medium text-neutral-400">
             Add a action
           </span>
           <div className="flex flex-col gap-2 py-5">
@@ -393,13 +399,13 @@ function Actions({
                     setSelectedAction(key);
                     setAdded(!added);
                   }}
-                  className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-100"
+                  className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="rounded-sm border border-neutral-200 p-1 shadow-[0px_2px_0px_0px_rgba(0,0,0,0)]">
+                    <div className="border border-neutral-800 p-1 shadow-[0px_2px_0px_0px_rgba(0,0,0,0)]">
                       {action.icon}
                     </div>
-                    <span>{action.label}</span>
+                    <span className="text-neutral-300">{action.label}</span>
                   </div>
                   <span className="text-sm text-neutral-500">
                     {action.description}

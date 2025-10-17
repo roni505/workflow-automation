@@ -10,9 +10,9 @@ export default function RootLayouttttt({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen w-screen">
+    <div className="flex h-screen w-screen bg-black">
       {/* <SideBar /> */}
-      <div className="m-3 flex h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] flex-col items-center justify-between rounded-xl border border-[#e9e9e9]">
+      <div className="m-3 flex h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)] flex-col items-center justify-between rounded-xl border border-neutral-800">
         <NavBar />
         <div className="flex h-full w-full flex-col items-center justify-center gap-5 rounded-b-xl">
           <main className="h-full w-full flex-1">{children}</main>

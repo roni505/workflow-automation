@@ -74,24 +74,14 @@ function WorkFlow() {
   }, []);
 
   return (
-    <div className="h-full w-full bg-[#faf9fd]">
-      {/* <div className="w-2xl flex bg-red-500"> */}
-      {/* <Button
-        text="Execute workflow"
-        className="rounded-lg bg-blue-700 px-4 py-2 text-white"
-        children
-      /> */}
-      {/* </div> */}
+    <div className="h-full w-full bg-[#000000]">
       <ReactFlowProvider>
         <ReactFlow
           nodes={iNodes}
           edges={iEdges}
           nodeTypes={nodeTypes}
-          // onNodesChange={onNodesChange}
-          // onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           fitView
-          // defaultViewport={{ x: 0, y: 0, zoom: 1 }}
           fitViewOptions={{
             padding: 0.3, // extra space around nodes
             minZoom: 1, // don’t zoom in too close
@@ -99,12 +89,6 @@ function WorkFlow() {
           }}
         />
         <Controls />
-        {/* <Background
-          variant={BackgroundVariant.Dots}
-          gap={12}
-          size={1}
-          color="#d1d5db"
-        /> */}
       </ReactFlowProvider>
     </div>
   );
