@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useActionFormStore } from "../stores/action-form-store";
 import { useNodeStore } from "../stores/node-store";
 import { Handle, Position } from "@xyflow/react";
+import { Angle } from "./icons/angle";
 
 export function DynamicNode({ id, data }: { id: string; data: any }) {
   const { isActionAdded, setIsActionAdded } = useActionFormStore();
@@ -19,7 +20,12 @@ export function DynamicNode({ id, data }: { id: string; data: any }) {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="w-xl flex items-center justify-between gap-2 border border-neutral-800 bg-neutral-950 px-4 py-3 shadow-[0_0_2px_0_rgba(48,48,48,0.20)] duration-200 hover:border hover:border-[#9e9e9e]">
+      <div className="w-xl relative flex items-center justify-between gap-2 border border-neutral-800 bg-neutral-950 px-4 py-3 shadow-[0_0_2px_0_rgba(48,48,48,0.20)] duration-200 hover:border hover:border-[#9e9e9e]">
+        <Angle className="absolute left-0 top-0" />
+        <Angle className="absolute right-0 top-0 rotate-90" />
+        <Angle className="absolute bottom-0 right-0 -rotate-180" />
+        <Angle className="absolute bottom-0 left-0 -rotate-90" />
+
         <div className="flex items-center gap-2">
           {/* <span className="px-2 text-neutral-400">1</span> */}
           <div className="border border-neutral-800 p-1">

@@ -1,15 +1,18 @@
-export function Angle() {
+interface AngleProps {
+  className?: string;
+}
+
+export function Angle({ className }: AngleProps) {
   return (
-    <div className="relative">
+    <div className={`absolute ${className}`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="15"
-        height="15"
-        viewBox="0 0 15 15"
+        width="12"
+        height="12"
+        viewBox="0 0 10 10"
         fill="none"
-        className="aboslute top-1"
       >
-        <path d="M15 1H1V15" stroke="white" />
+        <path d="M15 1H1V15" stroke="#ffffff" />
       </svg>
     </div>
   );

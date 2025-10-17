@@ -162,7 +162,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
   const credentialConfig = credentialsData[credentialType];
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       {!newCredential ? (
         <div className="w-md flex flex-col gap-5 border border-neutral-800 bg-black px-6 py-6 shadow-lg">
           <div className="flex flex-col gap-2">
@@ -429,7 +429,7 @@ function Actions({
             const actionData = actionsData[selectedAction];
 
             // Account for manual node position + its height + desired spacing
-            const manualNodeHeight = 36; // Approximate height of the manual node
+            const manualNodeHeight = 44; // Approximate height of the manual node
             const desiredSpacing = 82; // Consistent spacing you want between all nodes
             const dynamicNodeCount = iNodes.filter(
               (node) => node.type === "dynamicNode",

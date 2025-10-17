@@ -39,25 +39,29 @@ export function ManualNode() {
         }}
         className="w-xl group relative flex cursor-pointer flex-col items-start justify-start border border-neutral-800 bg-neutral-950 shadow-md shadow-zinc-950/5 duration-200 hover:border hover:border-[#326100] hover:bg-neutral-950"
       >
-        <Angle />
-        <Plus
+        <Angle className="absolute left-0" />
+        <Angle className="absolute right-0 top-0 rotate-90" />
+        <Angle className="absolute bottom-0 right-0 -rotate-180" />
+
+        {/* <Plus
           size={4}
           className="absolute -right-0.5 -top-0.5 bg-white text-white"
-        />
+        /> */}
         {/* <Plus
           size={4}
           className="absolute -left-0.5 -top-0.5 bg-white text-white"
-        /> */}
-        <Plus
+          /> */}
+        {/* <Plus
           size={4}
           className="absolute -bottom-0.5 -left-0.5 bg-white text-white"
         />
         <Plus
           size={4}
           className="absolute -bottom-0.5 -right-0.5 bg-white text-white"
-        />
+        /> */}
+        <Angle className="absolute bottom-0 left-0 -rotate-90" />
 
-        <div className="w-full border-b border-b-neutral-800 px-4 py-2 text-xs font-medium text-neutral-500">
+        <div className="w-full border-b border-b-neutral-800 px-4 py-3 text-xs font-medium text-neutral-500">
           Execution will start when you click the start exution button
         </div>
         <div className="flex items-center gap-2 px-4 py-4">
@@ -76,7 +80,7 @@ export function ManualNode() {
             onClick={() => setIsOpen(!isOpen)}
             className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-2 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
           >
-            {/* <Plus
+            <Plus
               className="absolute -left-1 -top-1 text-neutral-300"
               size={8}
             />
@@ -96,7 +100,7 @@ export function ManualNode() {
               size={16}
               strokeWidth={3}
               className="transition-all duration-75 group-hover:text-white"
-            /> */}
+            />
             Add node
           </button>
         </>

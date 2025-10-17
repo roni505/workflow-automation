@@ -1,6 +1,6 @@
 "use client";
 
-import { Component, Download, Plus, Waypoints } from "lucide-react";
+import { Component, Download, Plus, Square, Waypoints } from "lucide-react";
 import { useState } from "react";
 import { useNodeStore } from "../stores/node-store";
 import axios from "axios";
@@ -101,8 +101,28 @@ function NavBar() {
           await getAllWorkflow(setWorkflow);
           router.push("/all-workflow");
         }}
-        className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-2 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
+        className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-3 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
       >
+        <Square
+          className="absolute -left-1 -top-1 bg-black"
+          color="#525252"
+          size={10}
+        />
+        <Square
+          className="absolute -right-1 -top-1 bg-black"
+          color="#525252"
+          size={10}
+        />
+        <Square
+          className="absolute -bottom-1 -left-1 bg-black"
+          color="#525252"
+          size={10}
+        />
+        <Square
+          className="absolute -bottom-1 -right-1 bg-black"
+          color="#525252"
+          size={10}
+        />
         {/* <Plus className="absolute -left-2 -top-2" color="#7843FF" size={13} />
         <Plus className="absolute -right-2 -top-2" color="#7843FF" size={13} />
         <Plus
@@ -141,20 +161,29 @@ function NavBar() {
             router,
           })
         }
-        className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-2 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
+        className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-3 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
       >
-        {/* <Plus className="absolute -left-2 -top-2" color="#7843FF" size={13} />
-        <Plus className="absolute -right-2 -top-2" color="#7843FF" size={13} />
-        <Plus
-          className="absolute -bottom-2 -left-2"
-          color="#7843FF"
-          size={13}
+        {/* <Plus className="absolute -left-2 -top-2" color="#7843FF" size={13} /> */}
+        <Square
+          className="absolute -left-1 -top-1 bg-black"
+          color="#525252"
+          size={10}
         />
-        <Plus
-          className="absolute -bottom-2 -right-2"
-          color="#7843FF"
-          size={13}
-        /> */}
+        <Square
+          className="absolute -right-1 -top-1 bg-black"
+          color="#525252"
+          size={10}
+        />
+        <Square
+          className="absolute -bottom-1 -left-1 bg-black"
+          color="#525252"
+          size={10}
+        />
+        <Square
+          className="absolute -bottom-1 -right-1 bg-black"
+          color="#525252"
+          size={10}
+        />
         <Download size={16} className="text-neutral-200" />
         Save
       </button>
