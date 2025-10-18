@@ -163,7 +163,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
   const credentialConfig = credentialsData[credentialType];
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       {!newCredential ? (
         <motion.div
           initial={{
@@ -449,40 +449,74 @@ function Actions({
   const [added, setAdded] = useState(false);
   const [selectedAction, setSelectedAction] = useState("");
 
-  return (
+  return createPortal(
     <div>
       {!added && (
-        <div className="cursor-pointer divide-y divide-neutral-800 border border-neutral-800 bg-black px-2 duration-200">
-          <span className="flex w-full px-4 py-2 text-sm font-medium text-neutral-400">
-            Add a action
-          </span>
-          <div className="flex flex-col gap-2 py-5">
-            {Object.keys(actionsData).map((key) => {
-              const action = actionsData[key];
-              return (
-                <div
-                  key={key}
-                  onClick={() => {
-                    setIsOpen(!isOpen);
-                    setIsAddStepClicked(!isAddStepClicked);
-                    setSelectedAction(key);
-                    setAdded(!added);
-                  }}
-                  className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="border border-neutral-800 p-1 shadow-[0px_2px_0px_0px_rgba(0,0,0,0)]">
-                      {action.icon}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <motion.div
+            initial={{
+              opacity: 0,
+              filter: "blur(20px)",
+            }}
+            whileInView={{
+              opacity: 1,
+              filter: "blur(0px)",
+            }}
+            transition={{
+              duration: 0.3,
+              ease: "easeInOut",
+            }}
+            className="border border-dashed border-neutral-800 bg-black p-2"
+          >
+            <div className="w-md relative cursor-pointer divide-y divide-neutral-800 border border-neutral-800 bg-black px-2 duration-200">
+              <Square
+                size={8}
+                className="absolute -right-2 -top-2 bg-neutral-600"
+              />
+              <Square
+                size={8}
+                className="absolute -left-2 -top-2 bg-neutral-600"
+              />
+              <Square
+                size={8}
+                className="absolute -bottom-2 -right-2 bg-neutral-600"
+              />
+              <Square
+                size={8}
+                className="absolute -bottom-2 -left-2 bg-neutral-600"
+              />
+              <span className="flex w-full px-4 py-2 text-sm font-medium text-neutral-400">
+                Add a action
+              </span>
+              <div className="flex flex-col gap-2 py-5">
+                {Object.keys(actionsData).map((key) => {
+                  const action = actionsData[key];
+                  return (
+                    <div
+                      key={key}
+                      onClick={() => {
+                        setIsOpen(!isOpen);
+                        setIsAddStepClicked(!isAddStepClicked);
+                        setSelectedAction(key);
+                        setAdded(!added);
+                      }}
+                      className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="border border-neutral-800 p-1 shadow-[0px_2px_0px_0px_rgba(0,0,0,0)]">
+                          {action.icon}
+                        </div>
+                        <span className="text-neutral-300">{action.label}</span>
+                      </div>
+                      <span className="text-sm text-neutral-500">
+                        {action.description}
+                      </span>
                     </div>
-                    <span className="text-neutral-300">{action.label}</span>
-                  </div>
-                  <span className="text-sm text-neutral-500">
-                    {action.description}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
         </div>
       )}
 
@@ -543,7 +577,8 @@ function Actions({
           }}
         />
       )}
-    </div>
+    </div>,
+    document.body,
   );
 }
 

@@ -17,7 +17,7 @@ export default function Home() {
       <div className="m-3 flex w-screen flex-col items-center justify-between rounded-xl border border-[#292929]">
         <Navbar />
         <div className="flex h-full w-full flex-col items-center justify-center gap-5 rounded-b-xl">
-          <TriggerBtn isOpen={isOpen} setIsOpen={setIsOpen} />
+          <TriggerBtn h="24" w="40" isOpen={isOpen} setIsOpen={setIsOpen} />
           {isOpen ? <AddTrigger /> : ""}
         </div>
       </div>
