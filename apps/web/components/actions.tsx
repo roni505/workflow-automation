@@ -1,6 +1,6 @@
 "use client";
 
-import { Brain, ChevronDown, Plus } from "lucide-react";
+import { Brain, ChevronDown, Plus, Square } from "lucide-react";
 import TelegramIcon from "./icons/telegram";
 import { GmailIcon } from "./icons/gamil";
 import { useState } from "react";
@@ -10,6 +10,7 @@ import { useActionFormStore } from "../stores/action-form-store";
 import { useCredentialsStore } from "../stores/credentials-store";
 import axios from "axios";
 import { Credentials } from "@repo/types/workflow";
+import { motion } from "motion/react";
 
 export const fieldDefinitions: Record<string, string> = {
   // Telegram fields
@@ -162,198 +163,266 @@ function Modal({ choosenAction, onClose }: ModalProps) {
   const credentialConfig = credentialsData[credentialType];
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
       {!newCredential ? (
-        <div className="w-md flex flex-col gap-5 border border-neutral-800 bg-black px-6 py-6 shadow-lg">
-          <div className="flex flex-col gap-2">
-            <span className="text-2xl font-medium text-neutral-300">
-              {choosenAction.formTitle}
-            </span>
-            <span className="text-sm text-neutral-500">
-              {choosenAction.formDescription}
-            </span>
-          </div>
-          <div className="flex flex-col gap-3">
-            <label
-              htmlFor=""
-              className="text-base font-medium text-neutral-300"
-            >
-              Credential to connect with
-            </label>
-            <div className="relative flex w-full">
-              <div
-                id=""
-                className="relative h-10 w-full cursor-pointer appearance-none rounded-sm border border-neutral-700 px-2"
-                onClick={() => setDropDown(!dropDown)}
-              >
-                <span className="absolute top-2 w-full text-sm text-neutral-500">
-                  {credentialFormValues.selectedCredential
-                    ? credentialData.find(
-                        (c) => c.id === credentialFormValues.selectedCredential,
-                      )?.name
-                    : "Choose credentials"}
-                </span>
-                {dropDown && (
-                  <div className="absolute -right-0.5 top-10 w-[calc(100%+3px)] rounded-sm border border-neutral-800 bg-black shadow-[0px_2px_12px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
-                    <div className="p-1">
-                      {credentialData.map((cred) => {
-                        return (
-                          <div
-                            onClick={() => {
-                              console.log(
-                                "This is the data of the credentialFormValues: ",
-                                credentialFormValues,
-                              );
-
-                              setCredentialFormValues({
-                                selectedCredential: cred.id,
-                              });
-                              setDropDown(false);
-                            }}
-                            key={cred.id}
-                            className="cursor-pointer rounded-sm px-2 py-2 text-sm text-neutral-300 hover:bg-neutral-950"
-                          >
-                            {cred.name}
-                          </div>
-                        );
-                      })}
-                      <div className="flex items-center justify-center gap-2">
-                        <button
-                          onClick={() => setNewCredential(!newCredential)}
-                          className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-sm border border-neutral-700 py-2 text-sm text-neutral-300 transition-all duration-200 hover:bg-neutral-950"
-                        >
-                          <Plus size={16} />
-                          Add New
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <span className="absolute right-1 top-3 text-neutral-500">
-                <ChevronDown size={20} />
+        <motion.div
+          initial={{
+            opacity: 0,
+            filter: "blur(20px)",
+          }}
+          whileInView={{
+            opacity: 1,
+            filter: "blur(0px)",
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut",
+          }}
+          className="border border-dashed border-neutral-800 bg-black p-2"
+        >
+          <div className="w-md relative flex flex-col gap-5 border border-neutral-800 bg-black px-8 py-8 shadow-lg">
+            <Square
+              size={8}
+              className="absolute -right-2 -top-2 bg-neutral-600"
+            />
+            <Square
+              size={8}
+              className="absolute -left-2 -top-2 bg-neutral-600"
+            />
+            <Square
+              size={8}
+              className="absolute -bottom-2 -right-2 bg-neutral-600"
+            />
+            <Square
+              size={8}
+              className="absolute -bottom-2 -left-2 bg-neutral-600"
+            />
+            <div className="flex flex-col gap-2">
+              <span className="text-2xl font-medium text-neutral-300">
+                {choosenAction.formTitle}
+              </span>
+              <span className="text-sm text-neutral-500">
+                {choosenAction.formDescription}
               </span>
             </div>
-          </div>
-          <div className="flex flex-col gap-3">
-            {choosenAction.fields.map((fieldKey: string) => (
-              <div key={fieldKey} className="flex flex-col gap-1">
-                <label
-                  htmlFor=""
-                  className="text-base font-medium text-neutral-300"
+            <div className="flex flex-col gap-3">
+              <label
+                htmlFor=""
+                className="text-base font-medium text-neutral-300"
+              >
+                Credential to connect with
+              </label>
+              <div className="relative flex w-full">
+                <div
+                  id=""
+                  className="relative h-10 w-full cursor-pointer appearance-none rounded-sm border border-neutral-700 px-2"
+                  onClick={() => setDropDown(!dropDown)}
                 >
-                  {getFieldLabel(fieldKey)}
-                </label>
-                {isTextareaField(fieldKey) ? (
-                  <textarea
-                    value={formValues[fieldKey] || ""}
-                    placeholder="Type your message..."
-                    className="h-36 rounded-sm border border-neutral-700 px-2 py-2 placeholder:text-sm placeholder:text-neutral-500"
-                    required
-                    onChange={(e) => handleChange(fieldKey, e.target.value)}
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    value={formValues[fieldKey] || ""}
-                    placeholder={
-                      fieldKey === "email" || fieldKey === "sendTo"
-                        ? "recipient@gmail.com"
-                        : ""
-                    }
-                    className="rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
-                    required
-                    onChange={(e) => handleChange(fieldKey, e.target.value)}
-                  />
-                )}
+                  <span className="absolute top-2 w-full text-sm text-neutral-500">
+                    {credentialFormValues.selectedCredential
+                      ? credentialData.find(
+                          (c) =>
+                            c.id === credentialFormValues.selectedCredential,
+                        )?.name
+                      : "Choose credentials"}
+                  </span>
+                  {dropDown && (
+                    <div className="absolute -right-0.5 top-10 w-[calc(100%+3px)] rounded-sm border border-neutral-800 bg-black shadow-[0px_2px_12px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+                      <div className="p-1">
+                        {credentialData.map((cred) => {
+                          return (
+                            <div
+                              onClick={() => {
+                                console.log(
+                                  "This is the data of the credentialFormValues: ",
+                                  credentialFormValues,
+                                );
+
+                                setCredentialFormValues({
+                                  selectedCredential: cred.id,
+                                });
+                                setDropDown(false);
+                              }}
+                              key={cred.id}
+                              className="cursor-pointer rounded-sm px-2 py-2 text-sm text-neutral-300 hover:bg-neutral-950"
+                            >
+                              {cred.name}
+                            </div>
+                          );
+                        })}
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => setNewCredential(!newCredential)}
+                            className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-sm border border-neutral-700 py-2 text-sm text-neutral-300 transition-all duration-200 hover:bg-neutral-950"
+                          >
+                            <Plus size={16} />
+                            Add New
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <span className="absolute right-1 top-3 text-neutral-500">
+                  <ChevronDown size={20} />
+                </span>
               </div>
-            ))}
-          </div>
-          <div className="flex justify-end gap-3 pt-3">
-            <button
-              onClick={() => onClose()}
-              className="rounded-sm border border-neutral-800 px-8 py-2 text-neutral-300 hover:bg-neutral-950"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() =>
-                onClose(formValues, credentialFormValues.selectedCredential)
-              }
-              className="rounded-sm bg-neutral-900 px-8 py-2 text-neutral-200 hover:bg-neutral-800"
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="w-md flex flex-col gap-5 rounded-xl border border-neutral-400 bg-white px-6 py-6 shadow-lg">
-          <div className="flex flex-col gap-2">
-            <span className="text-2xl font-medium">
-              Add new {credentialConfig.label} credentials
-            </span>
-            <span className="text-sm text-neutral-600">
-              Enter details for your {credentialConfig.label} integration
-            </span>
-          </div>
-          <div className="flex flex-col gap-3">
-            {credentialConfig.fields.map((fieldKey: string) => (
-              <div key={fieldKey} className="flex flex-col gap-1">
-                <label htmlFor="" className="text-base font-medium">
-                  {getFieldLabel(fieldKey)}
-                </label>
-                {isTextareaField(fieldKey) ? (
-                  <textarea
-                    value={credentialFormValues[fieldKey] || ""}
-                    placeholder="Type your message..."
-                    className="h-36 rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
-                    required
-                    onChange={(e) =>
-                      handleCredentialChange(fieldKey, e.target.value)
-                    }
-                  />
-                ) : (
-                  <input
-                    type={fieldKey === "appPassword" ? "password" : "text"}
-                    value={credentialFormValues[fieldKey] || ""}
-                    placeholder={
-                      fieldKey === "email"
-                        ? "your-email@gmail.com"
-                        : fieldKey === "appPassword"
-                          ? "Enter your app password"
+            </div>
+            <div className="flex flex-col gap-3">
+              {choosenAction.fields.map((fieldKey: string) => (
+                <div key={fieldKey} className="flex flex-col gap-1">
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-neutral-300"
+                  >
+                    {getFieldLabel(fieldKey)}
+                  </label>
+                  {isTextareaField(fieldKey) ? (
+                    <textarea
+                      value={formValues[fieldKey] || ""}
+                      placeholder="Type your message..."
+                      className="h-36 rounded-sm border border-neutral-700 px-2 py-2 text-white placeholder:text-sm placeholder:text-neutral-500"
+                      required
+                      onChange={(e) => handleChange(fieldKey, e.target.value)}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      value={formValues[fieldKey] || ""}
+                      placeholder={
+                        fieldKey === "email" || fieldKey === "sendTo"
+                          ? "recipient@gmail.com"
                           : ""
-                    }
-                    className="rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
-                    required
-                    onChange={(e) =>
-                      handleCredentialChange(fieldKey, e.target.value)
-                    }
-                  />
+                      }
+                      className="rounded-sm border border-neutral-300 px-2 py-2 text-white placeholder:text-sm"
+                      required
+                      onChange={(e) => handleChange(fieldKey, e.target.value)}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-3 pt-3">
+              <button
+                onClick={() => onClose()}
+                className="rounded-sm border border-neutral-800 px-8 py-2 text-neutral-300 hover:bg-neutral-950"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() =>
+                  onClose(formValues, credentialFormValues.selectedCredential)
+                }
+                className="rounded-sm bg-neutral-900 px-8 py-2 text-neutral-200 hover:bg-neutral-800"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      ) : (
+        <div className="border border-dashed border-neutral-800 bg-black p-2">
+          <motion.div
+            initial={{
+              opacity: 0,
+              filter: "blur(20px)",
+            }}
+            whileInView={{
+              opacity: 1,
+              filter: "blur(0px)",
+            }}
+            transition={{
+              duration: 0.3,
+              ease: "easeInOut",
+            }}
+            className="w-md relative flex flex-col gap-5 border border-neutral-800 bg-black px-6 py-6 shadow-lg"
+          >
+            <Square
+              size={8}
+              className="absolute -right-2 -top-2 bg-neutral-600"
+            />
+            <Square
+              size={8}
+              className="absolute -left-2 -top-2 bg-neutral-600"
+            />
+            <Square
+              size={8}
+              className="absolute -bottom-2 -right-2 bg-neutral-600"
+            />
+            <Square
+              size={8}
+              className="absolute -bottom-2 -left-2 bg-neutral-600"
+            />
+            <div className="flex flex-col gap-2">
+              <span className="text-2xl font-medium text-neutral-300">
+                Add new {credentialConfig.label} credentials
+              </span>
+              <span className="text-sm text-neutral-500">
+                Enter details for your {credentialConfig.label} integration
+              </span>
+            </div>
+            <div className="flex flex-col gap-3">
+              {credentialConfig.fields.map((fieldKey: string) => (
+                <div key={fieldKey} className="flex flex-col gap-1">
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-neutral-300"
+                  >
+                    {getFieldLabel(fieldKey)}
+                  </label>
+                  {isTextareaField(fieldKey) ? (
+                    <textarea
+                      value={credentialFormValues[fieldKey] || ""}
+                      placeholder="Type your message..."
+                      className="h-36 rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                      required
+                      onChange={(e) =>
+                        handleCredentialChange(fieldKey, e.target.value)
+                      }
+                    />
+                  ) : (
+                    <input
+                      type={fieldKey === "appPassword" ? "password" : "text"}
+                      value={credentialFormValues[fieldKey] || ""}
+                      placeholder={
+                        fieldKey === "email"
+                          ? "your-email@gmail.com"
+                          : fieldKey === "appPassword"
+                            ? "Enter your app password"
+                            : ""
+                      }
+                      className="rounded-sm border border-neutral-700 px-2 py-2 placeholder:text-sm placeholder:text-neutral-500"
+                      required
+                      onChange={(e) =>
+                        handleCredentialChange(fieldKey, e.target.value)
+                      }
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end gap-3 pt-3">
+              <button
+                onClick={() => onClose()}
+                className="rounded-sm border border-neutral-800 px-8 py-2 text-neutral-300 hover:bg-neutral-950"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => (
+                  setNewCredential(!newCredential),
+                  saveNewCredential(
+                    credentialFormValues,
+                    choosenAction,
+                    addCredentails,
+                  )
                 )}
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-end gap-3 pt-3">
-            <button
-              onClick={() => onClose()}
-              className="rounded-sm border border-neutral-300 px-8 py-2 hover:bg-neutral-300"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => (
-                setNewCredential(!newCredential),
-                saveNewCredential(
-                  credentialFormValues,
-                  choosenAction,
-                  addCredentails,
-                )
-              )}
-              className="rounded-sm bg-neutral-200 px-8 py-2 hover:bg-neutral-300"
-            >
-              Done
-            </button>
-          </div>
+                className="rounded-sm bg-neutral-900 px-8 py-2 text-neutral-200 hover:bg-neutral-800"
+              >
+                Done
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>,
