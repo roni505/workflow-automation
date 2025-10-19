@@ -9,7 +9,6 @@ import DeleteModal from "../../components/delete-modal";
 
 function AllWorkflows() {
   const [isOpen, setIsOpen] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
   const [workflowIdToDelete, setWorkflowIdToDelete] = useState<number | null>();
 
   const { savedWorkflow, deleteWorkflow } = useAllWorkflowStore();
@@ -33,11 +32,7 @@ function AllWorkflows() {
               <Trash
                 size={16}
                 className="cursor-pointer text-red-800"
-                // onClick={() => setDeleteModal(!deleteModal)}
-                onClick={
-                  () => setWorkflowIdToDelete(workflow.id)
-                  // setDeleteModal(!deleteModal)
-                }
+                onClick={() => setWorkflowIdToDelete(workflow.id)}
               />
             </div>
           ))}
@@ -45,9 +40,7 @@ function AllWorkflows() {
       </div>
       {workflowIdToDelete && (
         <DeleteModal
-          // setModalDelete={setDeleteModal}
           onClose={() => setWorkflowIdToDelete(null)}
-          // deleteModal={deleteModal}
           id={workflowIdToDelete}
           deleteWorkflow={deleteWorkflow}
         />
