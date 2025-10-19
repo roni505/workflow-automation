@@ -3,13 +3,19 @@ import { WorkFlow } from "@repo/types/workflow";
 
 export interface WorkflowStateType {
   savedWorkflow: WorkFlow[];
-  // savedWorkflow: WorkFlow | null;
-
   setWorkflow: (data: WorkFlow[]) => void;
+  deleteWorkflow: (id: number) => void;
 }
 
 export const useAllWorkflowStore = create<WorkflowStateType>((set) => ({
   savedWorkflow: [],
+
+  deleteWorkflow: (id) =>
+    set((state) => ({
+      savedWorkflow: state.savedWorkflow.filter(
+        (workflow) => workflow.id !== id,
+      ),
+    })),
 
   setWorkflow: (data) =>
     set(() => ({

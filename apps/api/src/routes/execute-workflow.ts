@@ -8,7 +8,7 @@ router.post("/workflow/:id", async (req, res) => {
   console.log("Control is inside workflow/:id");
 
   const body = req.params;
-  const workflow = await prisma.workflow.findMany({
+  const workflow = await prisma.workflow.findUnique({
     where: {
       id: body.id,
     },

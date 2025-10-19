@@ -36,10 +36,6 @@ model Workflow {
   connections Json
   user_Id     String
   user        User @relation(fields: [user_Id], references: [id]) 
-  // will update as the application grows
-  // settings    IWorkflowSettings?
-  // staticData  IDataObjects?
-  // meta        WorkflowFEMeta?
 }
 
 model Outbox_workflow {

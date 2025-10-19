@@ -7,6 +7,7 @@ import addCrdentails from "./routes/add-credentials";
 import getCredentials from "./routes/get-credentials";
 import executeWorflow from "./routes/execute-workflow";
 import getAllWorkflow from "./routes/get-workflow";
+import deleteWorkflow from "./routes/delete-workflow";
 
 const app = express();
 const PORT = 8080;
@@ -21,6 +22,7 @@ app.use("/api/v0", addCrdentails);
 app.use("/api/v0", getCredentials);
 app.use("/api/v0", executeWorflow);
 app.use("/api/v0", getAllWorkflow);
+app.use("/api/v0", deleteWorkflow);
 
 app.listen(PORT, () => {
   console.log(`Server is listing in PORT ${PORT}`);
