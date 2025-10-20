@@ -8,6 +8,7 @@ import getCredentials from "./routes/get-credentials";
 import executeWorflow from "./routes/execute-workflow";
 import getAllWorkflow from "./routes/get-workflow";
 import deleteWorkflow from "./routes/delete-workflow";
+import addWebhook from "./routes/add-webhook";
 
 const app = express();
 const PORT = 8080;
@@ -23,6 +24,7 @@ app.use("/api/v0", getCredentials);
 app.use("/api/v0", executeWorflow);
 app.use("/api/v0", getAllWorkflow);
 app.use("/api/v0", deleteWorkflow);
+app.use("/api/v0", addWebhook);
 
 app.listen(PORT, () => {
   console.log(`Server is listing in PORT ${PORT}`);

@@ -1,9 +1,16 @@
+"use client";
+
 import { MousePointerClick, Square, Webhook } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
+import { useState } from "react";
+import Actions from "./actions";
+import Modal from "./modal";
+import { actionsData } from "./modal";
 
 function AddTrigger() {
+  const [openModal, setOpenmodal] = useState(false);
   const router = useRouter();
   return createPortal(
     <div className="fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-black/70 px-2 duration-200">
@@ -52,7 +59,10 @@ function AddTrigger() {
                 Start runs by clicking the run button
               </span>
             </div>
-            <div className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950">
+            <div
+              onClick={() => setOpenmodal(!openModal)}
+              className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
+            >
               <div className="flex items-center gap-2">
                 <Webhook size={18} className="text-white" />
                 <span className="text-white">Webhook</span>
@@ -61,6 +71,14 @@ function AddTrigger() {
                 Start runs when by sending emails to a unique HTTP requests
               </span>
             </div>
+            {openModal && (
+              <Modal
+                choosenAction={actionsData["webhook"]}
+                onClose={() => {
+                  router.push("/workflow");
+                }}
+              />
+            )}
           </div>
         </div>
       </motion.div>

@@ -43,8 +43,6 @@ export async function workflowProducer(workflow: any) {
 
   await producer.send({
     topic: TOPIC_NAME,
-    messages: workflow.map((node: any) => ({
-      value: JSON.stringify(node),
-    })),
+    messages: [{ value: JSON.stringify(workflow) }],
   });
 }

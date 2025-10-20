@@ -42,23 +42,6 @@ export function ManualNode() {
         <Angle className="absolute left-0" />
         <Angle className="absolute right-0 top-0 rotate-90" />
         <Angle className="absolute bottom-0 right-0 -rotate-180" />
-
-        {/* <Plus
-          size={4}
-          className="absolute -right-0.5 -top-0.5 bg-white text-white"
-        /> */}
-        {/* <Plus
-          size={4}
-          className="absolute -left-0.5 -top-0.5 bg-white text-white"
-          /> */}
-        {/* <Plus
-          size={4}
-          className="absolute -bottom-0.5 -left-0.5 bg-white text-white"
-        />
-        <Plus
-          size={4}
-          className="absolute -bottom-0.5 -right-0.5 bg-white text-white"
-        /> */}
         <Angle className="absolute bottom-0 left-0 -rotate-90" />
 
         <div className="w-full border-b border-b-neutral-800 px-4 py-3 text-xs font-medium text-neutral-500">
@@ -114,5 +97,3 @@ export function ManualNode() {
     </div>
   );
 }
-
-// shadow-[0px_-2px_0px_0px_rgba(255,255,255)] bg-gradient-to-b from-[rgb(0,114,255,100)] to-[rgb(0,25,96,100)] hover:from-[rgb(0,89,198)] hover:to-[rgb(0,19,71,100)]
