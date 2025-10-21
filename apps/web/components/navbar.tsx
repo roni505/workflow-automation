@@ -10,6 +10,8 @@ import { WorkFlow } from "@repo/types/workflow";
 import { useAllWorkflowStore } from "../stores/workflow-store";
 import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { useTriggerStore } from "../stores/trigger-store";
+import { useWebhookStore } from "../stores/webhook-store";
 
 const SAVE_WORKFLOW_API: string = "http://localhost:8080/api/v0/workflow";
 
@@ -22,6 +24,8 @@ interface SaveWorkFlowType {
   workflowName: string;
   setWorkflowId: (data: WorkFlow) => void;
   router: AppRouterInstance;
+  trigger: string;
+  webhook: string;
 }
 
 //function to get all workflow
@@ -51,6 +55,8 @@ async function saveWorkflow({
   workflowName,
   setWorkflowId,
   router,
+  trigger,
+  webhook,
 }: SaveWorkFlowType) {
   try {
     alert("Post res has been sent");
@@ -62,6 +68,7 @@ async function saveWorkflow({
         isArchived: false,
         iNodes,
         iEdges,
+        ...(trigger === "webhook" && webhook ? { webhook } : {}),
       },
       {
         headers: {
@@ -92,6 +99,8 @@ function NavBar() {
   const { iNodes, iEdges } = useNodeStore();
   const { setWorkflowId } = useWorkflowIdStore();
   const { setWorkflow } = useAllWorkflowStore();
+  const { trigger } = useTriggerStore();
+  const { webhook } = useWebhookStore();
   return (
     <div className="flex w-full flex-1 items-center justify-between gap-2 rounded-t-xl border-b border-b-neutral-800 bg-neutral-950 px-20 py-5 text-black">
       {/* <div className="relative"> */}
@@ -151,16 +160,20 @@ function NavBar() {
         />
       </div>
       <button
-        onClick={() =>
-          saveWorkflow({
-            SAVE_WORKFLOW_API,
-            iNodes,
-            iEdges,
-            workflowName,
-            setWorkflowId,
-            router,
-          })
-        }
+        onClick={() => {
+          if (trigger) {
+            saveWorkflow({
+              SAVE_WORKFLOW_API,
+              iNodes,
+              iEdges,
+              workflowName,
+              setWorkflowId,
+              router,
+              trigger,
+              webhook,
+            });
+          }
+        }}
         className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-3 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
       >
         {/* <Plus className="absolute -left-2 -top-2" color="#7843FF" size={13} /> */}

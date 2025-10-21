@@ -85,6 +85,24 @@ router.post("/workflow", async (req, res) => {
             id: "347245f7-fd38-442f-b155-ad0f202d8575",
           },
         },
+        ...(body.webhook
+          ? {
+              webhook: {
+                connectOrCreate: {
+                  where: { URL: body.webhook }, // unique field for existing check
+                  create: {
+                    URL: body.webhook,
+                    user: {
+                      connect: { id: "347245f7-fd38-442f-b155-ad0f202d8575" },
+                    },
+                  },
+                },
+              },
+            }
+          : {}),
+      },
+      include: {
+        webhook: true,
       },
     });
 

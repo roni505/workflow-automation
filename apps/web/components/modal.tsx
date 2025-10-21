@@ -13,7 +13,7 @@ import { Credentials } from "@repo/types/workflow";
 import { motion } from "motion/react";
 import { randomUUID } from "crypto";
 
-const BASE_URL = "http://localhost:8080/api/v0/webhook/register";
+const BASE_URL = "http://localhost:8080/api/v0/webhook";
 
 export const fieldDefinitions: Record<string, string> = {
   // Telegram fields
@@ -179,12 +179,12 @@ function Modal({ choosenAction, onClose }: ModalProps) {
 
   console.log(credentialData);
 
-  useEffect(() => {
-    if (choosenAction.nodeType === "webhookNode") {
-      const uuid = crypto.randomUUID();
-      setWebhookURL(`${BASE_URL}/${uuid}`);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (choosenAction.nodeType === "webhookNode") {
+  //     const uuid = crypto.randomUUID();
+  //     setWebhookURL(`${BASE_URL}/${uuid}`);
+  //   }
+  // }, []);
 
   const handleChange = (field: string, value: string) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));

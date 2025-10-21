@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
 import { useState } from "react";
-import Actions from "./actions";
 import Modal from "./modal";
 import { actionsData } from "./modal";
+import { useTriggerStore } from "../stores/trigger-store";
 
 function AddTrigger() {
+  const { trigger, setTrigger } = useTriggerStore();
   const [openModal, setOpenmodal] = useState(false);
   const router = useRouter();
   return createPortal(
@@ -48,7 +49,10 @@ function AddTrigger() {
           </span>
           <div className="flex flex-col gap-2 bg-black py-5">
             <div
-              onClick={() => router.push("/workflow")}
+              onClick={() => {
+                router.push("/workflow");
+                setTrigger("manual");
+              }}
               className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
             >
               <div className="flex items-center gap-2">
@@ -60,7 +64,11 @@ function AddTrigger() {
               </span>
             </div>
             <div
-              onClick={() => setOpenmodal(!openModal)}
+              onClick={() => {
+                setOpenmodal(!openModal);
+                setTrigger("webhook");
+                // alert(`Trigger clicked now ${trigger} `);
+              }}
               className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
             >
               <div className="flex items-center gap-2">

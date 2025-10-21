@@ -18,42 +18,30 @@ model User {
   name        String
   email       String @unique
   password    String
-  workflow    Workflow[]
+  Workflow    Workflow[]
   credentails Credentials[]
   webhook     Webhook[]
-  outbox      Outbox_workflow[]
+  // outbox      Outbox_workflow[]
 }
 
 
-model Workflow {
-  id          String @id @default(uuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  isActive      Boolean
-  name        String
-  isArchived  Boolean
-  nodes       Json
-  connections Json
-  user_Id     String
-  user        User @relation(fields: [user_Id], references: [id]) 
-}
 
-model Outbox_workflow {
-  id          String @id @default(uuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  isActive      Boolean
-  name        String
-  isArchived  Boolean
-  nodes       Json
-  connections Json
-  user_Id     String
-  user        User @relation(fields: [user_Id], references: [id]) 
-  // will update as the application grows
-  // settings    IWorkflowSettings?
-  // staticData  IDataObjects?
-  // meta        WorkflowFEMeta?
-}
+// model Outbox_workflow {
+//   id          String @id @default(uuid())
+//   createdAt    DateTime @default(now())
+//   updatedAt    DateTime @updatedAt
+//   isActive      Boolean
+//   name        String
+//   isArchived  Boolean
+//   nodes       Json
+//   connections Json
+//   user_Id     String
+//   user        User @relation(fields: [user_Id], references: [id]) 
+//   // will update as the application grows
+//   // settings    IWorkflowSettings?
+//   // staticData  IDataObjects?
+//   // meta        WorkflowFEMeta?
+// }
 
 model Credentials {
   id          String @id @default(uuid())
@@ -64,13 +52,25 @@ model Credentials {
   user        User @relation(fields: [user_Id], references: [id])
 }
 
-model Webhook {
+model Workflow {
   id          String @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isActive    Boolean
   name        String
-  method      String
-  path        String
-  header      String
-  secret      Int
+  isArchived  Boolean
+  nodes       Json
+  connections Json
+  user_Id     String
+  user        User @relation(fields: [user_Id], references: [id]) 
+  webhook_Id  String?
+  webhook     Webhook? @relation(fields: [webhook_Id], references: [id])
+}
+
+model Webhook {
+  id          String @id @unique @default(uuid())
+  URL         String @unique
+  workflow    Workflow[]
   user_id     String
   user        User @relation(fields: [user_id], references: [id])
 }
