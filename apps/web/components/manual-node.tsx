@@ -92,25 +92,23 @@ export function ManualNode() {
           <div className="border border-neutral-800 p-1">
             <Mouse size={20} className="text-neutral-400" />
           </div>
-          {/* {trigger === "manual" ? (
-            <div className="text-base text-neutral-300 duration-200 group-hover:text-white">
+          {trigger === "webhook" ? (
+            <>
+              <div className="w-full overflow-hidden truncate text-ellipsis whitespace-nowrap text-base text-neutral-300 duration-200 group-hover:text-white">
+                {webhook}
+              </div>
+              <button
+                onClick={() => navigator.clipboard.writeText(webhook)}
+                className="cursor-pointer rounded-sm border border-neutral-800 bg-neutral-800 px-3.5 py-1 text-sm text-neutral-300"
+              >
+                Copy
+              </button>
+            </>
+          ) : (
+            <div className="w-full overflow-hidden truncate text-ellipsis whitespace-nowrap text-base text-neutral-300 duration-200 group-hover:text-white">
               Click to execute workflow
             </div>
-          ) : (
-            <div className="text-base text-neutral-300 duration-200 group-hover:text-white">
-              Click to active workflow
-            </div>
-          )} */}
-          <div className="w-full overflow-hidden truncate text-ellipsis whitespace-nowrap text-base text-neutral-300 duration-200 group-hover:text-white">
-            {/* {trigger ? triggerTexts[trigger].action : "default text"} */}
-            {webhook}
-          </div>
-          <button
-            onClick={() => navigator.clipboard.writeText(webhook)}
-            className="cursor-pointer rounded-sm border border-neutral-800 bg-neutral-800 px-3.5 py-1 text-sm text-neutral-300"
-          >
-            Copy
-          </button>
+          )}
         </div>
       </div>
       {!isAddStepClicked && (

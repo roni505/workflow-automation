@@ -65,7 +65,7 @@ function AddTrigger() {
             </div>
             <div
               onClick={() => {
-                setOpenmodal(!openModal);
+                router.push("/workflow");
                 setTrigger("webhook");
                 // alert(`Trigger clicked now ${trigger} `);
               }}

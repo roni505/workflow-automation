@@ -8,13 +8,12 @@ router.post("/webhook/:webhookId", async (req, res) => {
   try {
     const { webhookId } = req.params;
 
+    const WEBHOOK_URL = `http://localhost:8080/api/v0/webhook/${webhookId}`;
+
     //find the webhook in db
     const webhook = await prisma.webhook.findUnique({
       where: {
-        id: webhookId,
-      },
-      include: {
-        user: true,
+        URL: WEBHOOK_URL,
       },
     });
 
@@ -34,7 +33,7 @@ router.post("/webhook/:webhookId", async (req, res) => {
       return res.status(404).json({ error: "Workflow not found" });
     }
 
-    // const producer = await workflowProducer(workflow);
+    const producer = await workflowProducer(workflow);
     console.log("Worflow from db: ", workflow);
 
     res.json({
