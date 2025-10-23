@@ -1,5 +1,3 @@
-"use client";
-
 import { Component, Download, Plus, Square, Waypoints } from "lucide-react";
 import { useState } from "react";
 import { useNodeStore } from "../stores/node-store";
