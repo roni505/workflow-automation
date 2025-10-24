@@ -28,8 +28,20 @@ function executeWorkflow(workflowId: string) {
   try {
     alert("Hey");
     console.log("This is the id: ", workflowId);
-
-    const response = axios.post(`${SAVE_WORKFLOW_API}/${workflowId}`);
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Token not present in the localstorage");
+    }
+    const response = axios.post(
+      `${SAVE_WORKFLOW_API}/${workflowId}`,
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
   } catch (error) {
     console.error("Failed executing workflow: ", error);
   }

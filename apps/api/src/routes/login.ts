@@ -6,7 +6,7 @@ import { JWT_SECRET } from "./signup";
 
 const router: Router = Router();
 
-router.post("/login", async (req, res) => {
+router.post("/auth/login", async (req, res) => {
   const body = LoginSchema.safeParse(req.body);
   try {
     if (!body.success) {
@@ -35,8 +35,6 @@ router.post("/login", async (req, res) => {
     const token = jwt.sign(
       {
         user_id: user.id,
-        user_name: user.name,
-        user_email: user.email,
       },
       JWT_SECRET,
     );

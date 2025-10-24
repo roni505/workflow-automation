@@ -21,27 +21,7 @@ model User {
   Workflow    Workflow[]
   credentails Credentials[]
   webhook     Webhook[]
-  // outbox      Outbox_workflow[]
 }
-
-
-
-// model Outbox_workflow {
-//   id          String @id @default(uuid())
-//   createdAt    DateTime @default(now())
-//   updatedAt    DateTime @updatedAt
-//   isActive      Boolean
-//   name        String
-//   isArchived  Boolean
-//   nodes       Json
-//   connections Json
-//   user_Id     String
-//   user        User @relation(fields: [user_Id], references: [id]) 
-//   // will update as the application grows
-//   // settings    IWorkflowSettings?
-//   // staticData  IDataObjects?
-//   // meta        WorkflowFEMeta?
-// }
 
 model Credentials {
   id          String @id @default(uuid())

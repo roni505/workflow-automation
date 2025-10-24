@@ -1,10 +1,11 @@
 import { prisma } from "@repo/db";
 import { Router } from "express";
 import { workflowProducer } from "../services/workflow-producer";
+import authMiddleware from "../middlewares/auth";
 
 const router: Router = Router();
 
-router.post("/workflow/:id", async (req, res) => {
+router.post("/workflow/:id", authMiddleware, async (req, res) => {
   console.log("Control is inside workflow/:id");
 
   const body = req.params;

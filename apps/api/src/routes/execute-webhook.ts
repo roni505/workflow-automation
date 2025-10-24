@@ -1,6 +1,7 @@
 import { prisma } from "@repo/db";
 import { Router } from "express";
 import { workflowProducer } from "../services/workflow-producer";
+import authMiddleware from "../middlewares/auth";
 
 const router: Router = Router();
 

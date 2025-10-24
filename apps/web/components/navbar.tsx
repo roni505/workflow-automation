@@ -1,3 +1,5 @@
+"use client";
+
 import { Component, Download, Plus, Square, Waypoints } from "lucide-react";
 import { useState } from "react";
 import { useNodeStore } from "../stores/node-store";
@@ -10,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { useTriggerStore } from "../stores/trigger-store";
 import { useWebhookStore } from "../stores/webhook-store";
+import Logout from "./logout";
 
 const SAVE_WORKFLOW_API: string = "http://localhost:8080/api/v0/workflow";
 
@@ -28,10 +31,16 @@ interface SaveWorkFlowType {
 
 //function to get all workflow
 async function getAllWorkflow(setWorkflow: (data: WorkFlow[]) => void) {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("No token found in localStorage");
+    return;
+  }
   try {
     const response = await axios.get(ALL_WORKFLOW_URL, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     const data = await response.data;
@@ -58,6 +67,11 @@ async function saveWorkflow({
 }: SaveWorkFlowType) {
   try {
     alert("Post res has been sent");
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
     const res = await axios.post(
       SAVE_WORKFLOW_API,
       {
@@ -71,6 +85,7 @@ async function saveWorkflow({
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       },
     );
@@ -157,47 +172,50 @@ function NavBar() {
           className="text-white outline-none"
         />
       </div>
-      <button
-        onClick={() => {
-          if (trigger) {
-            saveWorkflow({
-              SAVE_WORKFLOW_API,
-              iNodes,
-              iEdges,
-              workflowName,
-              setWorkflowId,
-              router,
-              trigger,
-              webhook,
-            });
-          }
-        }}
-        className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-3 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
-      >
-        {/* <Plus className="absolute -left-2 -top-2" color="#7843FF" size={13} /> */}
-        <Square
-          className="absolute -left-1 -top-1 bg-black"
-          color="#525252"
-          size={10}
-        />
-        <Square
-          className="absolute -right-1 -top-1 bg-black"
-          color="#525252"
-          size={10}
-        />
-        <Square
-          className="absolute -bottom-1 -left-1 bg-black"
-          color="#525252"
-          size={10}
-        />
-        <Square
-          className="absolute -bottom-1 -right-1 bg-black"
-          color="#525252"
-          size={10}
-        />
-        <Download size={16} className="text-neutral-200" />
-        Save
-      </button>
+      <div className="flex items-center justify-center gap-4">
+        <button
+          onClick={() => {
+            if (trigger) {
+              saveWorkflow({
+                SAVE_WORKFLOW_API,
+                iNodes,
+                iEdges,
+                workflowName,
+                setWorkflowId,
+                router,
+                trigger,
+                webhook,
+              });
+            }
+          }}
+          className="relative flex cursor-pointer items-center justify-center gap-1.5 border border-[#2d2d2d] bg-neutral-950 px-4 py-3 text-sm font-medium text-[#c0c0c0] duration-200 hover:bg-neutral-900 hover:text-neutral-300"
+        >
+          {/* <Plus className="absolute -left-2 -top-2" color="#7843FF" size={13} /> */}
+          <Square
+            className="absolute -left-1 -top-1 bg-black"
+            color="#525252"
+            size={10}
+          />
+          <Square
+            className="absolute -right-1 -top-1 bg-black"
+            color="#525252"
+            size={10}
+          />
+          <Square
+            className="absolute -bottom-1 -left-1 bg-black"
+            color="#525252"
+            size={10}
+          />
+          <Square
+            className="absolute -bottom-1 -right-1 bg-black"
+            color="#525252"
+            size={10}
+          />
+          <Download size={16} className="text-neutral-200" />
+          Save
+        </button>
+        <Logout />
+      </div>
     </div>
   );
 }

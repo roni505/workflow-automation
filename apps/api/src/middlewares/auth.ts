@@ -7,8 +7,6 @@ declare global {
   namespace Express {
     interface Request {
       user_id: string;
-      user_name: string;
-      user_email: string;
     }
   }
 }
@@ -28,11 +26,9 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   }
   const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
-  const { user_id, user_name, user_email } = decoded;
+  const { user_id } = decoded;
 
   req.user_id = user_id;
-  req.user_name = user_name;
-  req.user_email = user_email;
 
   next();
 };

@@ -61,12 +61,15 @@
 
 import { Router } from "express";
 import { prisma } from "@repo/db";
+import authMiddleware from "../middlewares/auth";
 
 const router: Router = Router();
 
-router.post("/workflow", async (req, res) => {
+router.post("/workflow", authMiddleware, async (req, res) => {
   const body = req.body;
   const user_id = req.user_id;
+  console.log("This is the user_id", user_id);
+
   console.log(body);
 
   if (!body) {
@@ -82,18 +85,19 @@ router.post("/workflow", async (req, res) => {
         connections: body.iEdges,
         user: {
           connect: {
-            id: "347245f7-fd38-442f-b155-ad0f202d8575",
+            id: user_id,
           },
         },
         ...(body.webhook
           ? {
               webhook: {
                 connectOrCreate: {
-                  where: { URL: body.webhook }, // unique field for existing check
+                  where: { URL: body.webhook },
                   create: {
                     URL: body.webhook,
                     user: {
-                      connect: { id: "347245f7-fd38-442f-b155-ad0f202d8575" },
+                      connect: { id: user_id },
+                      // connect: { id: "347245f7-fd38-442f-b155-ad0f202d8575" },
                     },
                   },
                 },
