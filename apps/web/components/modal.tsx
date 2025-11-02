@@ -3,7 +3,7 @@
 import { Brain, ChevronDown, LinkIcon, Plus, Square } from "lucide-react";
 import TelegramIcon from "./icons/telegram";
 import { GmailIcon } from "./icons/gamil";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EdgeData, NodeData, useNodeStore } from "../stores/node-store";
 import { useActionFormStore } from "../stores/action-form-store";
@@ -12,6 +12,7 @@ import axios from "axios";
 import { Credentials } from "@repo/types/workflow";
 import { motion } from "motion/react";
 import { randomUUID } from "crypto";
+import { useOnClickOutside } from "../hooks/useOnClickOutside";
 
 const BASE_URL = "http://localhost:8080/api/v0/webhook";
 
@@ -101,6 +102,7 @@ type ModalProps = {
     fromData?: Record<string, string>,
     selectedCredentialId?: string,
   ) => void;
+  modalClose?: (state: boolean) => void;
 };
 
 type CredentialType = keyof typeof credentialsData;
@@ -165,7 +167,7 @@ const isTextareaField = (fieldKey: string): boolean => {
 };
 
 // Updated Modal Component
-function Modal({ choosenAction, onClose }: ModalProps) {
+function Modal({ choosenAction, onClose, modalClose }: ModalProps) {
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const { fetchCredentails, addCredentails, credentialData } =
     useCredentialsStore();
@@ -179,12 +181,18 @@ function Modal({ choosenAction, onClose }: ModalProps) {
 
   console.log(credentialData);
 
-  // useEffect(() => {
-  //   if (choosenAction.nodeType === "webhookNode") {
-  //     const uuid = crypto.randomUUID();
-  //     setWebhookURL(`${BASE_URL}/${uuid}`);
-  //   }
-  // }, []);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const innerModalRef = useRef<HTMLDivElement>(null);
+
+  const handleOnClickOuter = (e: HTMLDivElement) => {
+    const element = e;
+
+    if (element === modalRef.current) {
+      if (modalClose) {
+        modalClose(false);
+      }
+    }
+  };
 
   const handleChange = (field: string, value: string) => {
     setFormValues((prev) => ({ ...prev, [field]: value }));
@@ -199,9 +207,15 @@ function Modal({ choosenAction, onClose }: ModalProps) {
   console.log("This is the node type: ", choosenAction.nodeType);
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+    <div
+      ref={modalRef}
+      onClick={(e) => handleOnClickOuter(e.currentTarget)}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+    >
       {!newCredential ? (
         <motion.div
+          ref={innerModalRef}
+          onClick={(e) => e.stopPropagation()}
           initial={{
             opacity: 0,
             filter: "blur(20px)",
@@ -426,7 +440,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                     <textarea
                       value={credentialFormValues[fieldKey] || ""}
                       placeholder="Type your message..."
-                      className="h-36 rounded-sm border border-neutral-300 px-2 py-2 placeholder:text-sm"
+                      className="h-36 rounded-sm border border-neutral-300 px-2 py-2 text-white placeholder:text-sm"
                       required
                       onChange={(e) =>
                         handleCredentialChange(fieldKey, e.target.value)
@@ -443,7 +457,7 @@ function Modal({ choosenAction, onClose }: ModalProps) {
                             ? "Enter your app password"
                             : ""
                       }
-                      className="rounded-sm border border-neutral-700 px-2 py-2 placeholder:text-sm placeholder:text-neutral-500"
+                      className="rounded-sm border border-neutral-700 px-2 py-2 text-white placeholder:text-sm placeholder:text-neutral-500"
                       required
                       onChange={(e) =>
                         handleCredentialChange(fieldKey, e.target.value)

@@ -144,6 +144,7 @@ function Actions({
 
       {isOpen && (
         <Modal
+          modalClose={setIsOpen}
           choosenAction={actionsData[selectedAction]}
           onClose={(formData, selectedCredentialId) => {
             // return if any of the values are missing
