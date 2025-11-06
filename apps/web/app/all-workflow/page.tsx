@@ -1,17 +1,37 @@
 "use client";
 
 import { useAllWorkflowStore } from "../../stores/workflow-store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TriggerBtn from "../../components/trigger-btn";
 import AddTrigger from "../../components/add-trigger";
 import { Trash } from "lucide-react";
 import DeleteModal from "../../components/delete-modal";
+import { useRouter } from "next/navigation";
 
 function AllWorkflows() {
   const [isOpen, setIsOpen] = useState(false);
   const [workflowIdToDelete, setWorkflowIdToDelete] = useState<number | null>();
-
   const { savedWorkflow, deleteWorkflow } = useAllWorkflowStore();
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        setIsAuthenticated(true);
+      } else {
+        router.replace("/login");
+      }
+    }
+    console.log("This is all the saved workflow: ", savedWorkflow);
+  }, []);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="mx-auto flex h-screen w-full justify-center gap-4 bg-black pt-36">
       <div className="flex w-full max-w-4xl flex-col gap-3 text-white">
@@ -26,7 +46,7 @@ function AllWorkflows() {
               key={workflow.id}
               className="flex w-full cursor-pointer items-center justify-between rounded-sm border border-neutral-700 px-3 py-6 hover:bg-neutral-950"
             >
-              <div className="flex flex-col justify-between">
+              <div className="flex flex-col justify-between text-sm text-neutral-400">
                 {workflow.name}
               </div>
               <Trash

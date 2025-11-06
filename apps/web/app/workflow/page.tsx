@@ -17,6 +17,7 @@ import { DynamicNode } from "../../components/dynamic-node";
 import { useNodeStore } from "../../stores/node-store";
 import { useCredentialsStore } from "../../stores/credentials-store";
 import { Button } from "@repo/ui/button";
+import { useRouter } from "next/navigation";
 
 const nodeTypes = {
   manualNode: ManualNode,
@@ -37,11 +38,25 @@ function WorkFlow() {
   const { fetchCredentails, credentialData, addCredentails } =
     useCredentialsStore();
 
-  useEffect(() => {
-    console.log("nodesstate");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
-    console.log(iNodes);
-  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedToken = localStorage.getItem("token");
+      if (storedToken) {
+        setIsAuthenticated(true);
+      } else {
+        router.replace("/login");
+      }
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   console.log("nodesstate");
+
+  //   console.log(iNodes);
+  // });
   // useEffect(() => {
   //   setNodes(iNodes);
   // }, [iNodes]);
@@ -60,18 +75,22 @@ function WorkFlow() {
   //     ),
   //   [addEdge],
   // );
-  const onConnect = useCallback(
-    (params: any) =>
-      // @ts-ignore
-      setEdges((edgesSnapshot: any) => addEdge(params, edgesSnapshot)),
-    [],
-  );
+  // const onConnect = useCallback(
+  //   (params: any) =>
+  //     // @ts-ignore
+  //     setEdges((edgesSnapshot: any) => addEdge(params, edgesSnapshot)),
+  //   [],
+  // );
 
   // fetch data the database
   useEffect(() => {
     fetchCredentails();
     // console.log("This are the credentials: ", credentialData);
   }, []);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="h-full w-full bg-[#000000]">
@@ -80,7 +99,6 @@ function WorkFlow() {
           nodes={iNodes}
           edges={iEdges}
           nodeTypes={nodeTypes}
-          onConnect={onConnect}
           fitView
           fitViewOptions={{
             padding: 0.3, // extra space around nodes

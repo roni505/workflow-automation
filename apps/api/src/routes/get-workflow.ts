@@ -9,9 +9,12 @@ router.get("/get-workflow", authMiddleware, async (req, res) => {
     const user_id = req.user_id;
     const data = await prisma.workflow.findMany({
       where: {
-        id: user_id,
+        user_Id: user_id,
       },
     });
+    console.log("This is the data from database: ", data);
+    console.log("This is the user id:", user_id);
+
     res.json({
       message: "All workflow sent",
       data: data,

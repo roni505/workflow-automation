@@ -10,7 +10,7 @@ type DeleteModalType = {
   onClose: () => void;
 };
 
-const DELETE_URL: string = "http://localhost:8080/api/v0/worflow/delete";
+const DELETE_URL: string = "http://localhost:8080/api/v0/workflow/delete";
 
 async function removeWorkflow(
   id: number,
@@ -20,9 +20,16 @@ async function removeWorkflow(
   try {
     console.log("control is inside the removeWorkflowFun");
 
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
     const response = await axios.delete(DELETE_URL, {
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       data: {
         id: id,

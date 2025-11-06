@@ -4,24 +4,33 @@ import authMiddleware from "../middlewares/auth";
 
 const router: Router = Router();
 
-router.delete("/worflow/delete", authMiddleware, async (req, res) => {
+router.delete("/workflow/delete", authMiddleware, async (req, res) => {
   console.log("Control is inside the delete route");
 
-  const body = req.body;
-  console.log(body);
-
+  const { id } = req.body;
   const user_id = req.user_id;
 
-  const deletedWorflow = await prisma.workflow.delete({
-    where: {
-      id: body.id,
-      user_Id: user_id,
-    },
-  });
-  res.json({
-    message: "Worflow deleted sucessfully",
-    data: deletedWorflow,
-  });
+  if (!id) {
+    return res.status(400).json({ error: "Workflow ID is required" });
+  }
+
+  try {
+    const workflow = await prisma.workflow.findUnique({ where: { id } });
+
+    if (!workflow) {
+      return res.status(404).json({ error: "Workflow not found" });
+    }
+
+    const deletedWorkflow = await prisma.workflow.delete({ where: { id } });
+
+    res.json({
+      message: "Workflow deleted successfully",
+      data: deletedWorkflow,
+    });
+  } catch (error) {
+    console.error("Error deleting workflow:", error);
+    res.status(500).json({ error: "Failed to delete workflow" });
+  }
 });
 
 export default router;
