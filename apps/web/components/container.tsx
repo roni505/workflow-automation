@@ -12,18 +12,6 @@ type ContainerPropsType = {
 function Container({ children, className }: ContainerPropsType) {
   return (
     <motion.div
-      initial={{
-        opacity: 0,
-        filter: "blur(20px)",
-      }}
-      whileInView={{
-        opacity: 1,
-        filter: "blur(0px)",
-      }}
-      transition={{
-        duration: 0.3,
-        ease: "easeInOut",
-      }}
       className={`border border-dashed border-neutral-800 bg-black p-2`}
     >
       <div

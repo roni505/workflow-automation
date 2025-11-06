@@ -1,14 +1,13 @@
-import { Mouse, Plus, Square } from "lucide-react";
+import { Mouse, Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 import Actions from "./actions";
 import { useActionFormStore } from "../stores/action-form-store";
 import axios from "axios";
-import { useWorkflowIdStore } from "../stores/workflowId-store";
 import { useSearchParams } from "next/navigation";
 import { Angle } from "./icons/angle";
 import { useTriggerStore } from "../stores/trigger-store";
 import { useWebhookStore } from "../stores/webhook-store";
-import { useNodeStore } from "../stores/node-store";
+import { toast } from "sonner";
 
 const triggerTexts = {
   manual: {
@@ -24,15 +23,17 @@ const triggerTexts = {
 
 const SAVE_WORKFLOW_API: string = "http://localhost:8080/api/v0/workflow";
 
-function executeWorkflow(workflowId: string) {
+async function executeWorkflow(workflowId: string) {
   try {
-    alert("Hey");
-    console.log("This is the id: ", workflowId);
     const token = localStorage.getItem("token");
+
     if (!token) {
-      console.log("Token not present in the localstorage");
+      toast.error("No token found! Please log in again.");
+      console.log("Token not present in the localStorage");
+      return;
     }
-    const response = axios.post(
+
+    const response = await axios.post(
       `${SAVE_WORKFLOW_API}/${workflowId}`,
       {},
       {
@@ -42,7 +43,14 @@ function executeWorkflow(workflowId: string) {
         },
       },
     );
+
+    if (response.status === 200) {
+      toast.success("Workflow executed successfully!");
+    } else {
+      toast.error("Failed to execute workflow. Try again.");
+    }
   } catch (error) {
+    toast.error("An error occurred while executing the workflow.");
     console.error("Failed executing workflow: ", error);
   }
 }
@@ -54,11 +62,9 @@ export function ManualNode() {
   const workflowId = searchParas.get("id");
   const [isOpen, setIsOpen] = useState(false);
   const { setIsActionAdded } = useActionFormStore();
-  const [isAddStepClicked, setIsAddStepClicked] = useState(false);
-  const { savedWorkflowId } = useWorkflowIdStore();
-  const { trigger, setTrigger } = useTriggerStore();
+  const [isAddStepClicked] = useState(false);
+  const { trigger } = useTriggerStore();
   const { webhook, setWebhook } = useWebhookStore();
-  const { iNodes, addNode } = useNodeStore();
 
   useEffect(() => {
     if (trigger === "webhook") {

@@ -13,6 +13,7 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import { useTriggerStore } from "../stores/trigger-store";
 import { useWebhookStore } from "../stores/webhook-store";
 import Logout from "./logout";
+import { toast, Toaster } from "sonner";
 
 const SAVE_WORKFLOW_API: string = "http://localhost:8080/api/v0/workflow";
 
@@ -66,12 +67,12 @@ async function saveWorkflow({
   webhook,
 }: SaveWorkFlowType) {
   try {
-    alert("Post res has been sent");
     const token = localStorage.getItem("token");
     if (!token) {
-      console.error("No token found in localStorage");
+      toast.error("No token found. Please log in again.");
       return;
     }
+
     const res = await axios.post(
       SAVE_WORKFLOW_API,
       {
@@ -89,20 +90,20 @@ async function saveWorkflow({
         },
       },
     );
-    console.log("This is the error from res:", res);
 
-    if (res) {
-      const data = await res.data;
+    if (res.status === 200) {
+      const data = res.data;
+      toast.success("Workflow saved successfully!");
       console.log("Data from db when saving the workflow: ", data.data.id);
-
-      router.replace(`?id=${data.data.id}`);
-      // setWorkflowId(data);
-      // console.log("This is the res from the add workflow api:", data);
+      setTimeout(() => {
+        router.replace(`?id=${data.data.id}`);
+      }, 1500);
+    } else {
+      toast.error("Failed to save workflow. Please try again.");
     }
-    return;
   } catch (error) {
+    toast.error("Error saving workflow. Please try again.");
     console.error("Error while fetching data", error);
-    console.log("Cannot post request");
   }
 }
 
@@ -116,8 +117,6 @@ function NavBar() {
   const { webhook } = useWebhookStore();
   return (
     <div className="flex w-full flex-1 items-center justify-between gap-2 rounded-t-xl border-b border-b-neutral-800 bg-neutral-950 px-20 py-5 text-black">
-      {/* <div className="relative"> */}
-      {/* <Plus className="absolute left-0 top-" /> */}
       <button
         onClick={async () => {
           await getAllWorkflow(setWorkflow);

@@ -32,7 +32,7 @@ export default function Home() {
         <Navbar />
         <div className="flex h-full w-full flex-col items-center justify-center gap-5 rounded-b-xl">
           <TriggerBtn size="large" isOpen={isOpen} setIsOpen={setIsOpen} />
-          {isOpen ? <AddTrigger /> : ""}
+          {isOpen ? <AddTrigger onClose={() => setIsOpen(false)} /> : ""}
         </div>
       </div>
     </div>

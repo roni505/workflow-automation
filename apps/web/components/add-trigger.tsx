@@ -4,33 +4,50 @@ import { MousePointerClick, Square, Webhook } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Modal from "./modal";
-import { actionsData } from "./modal";
 import { useTriggerStore } from "../stores/trigger-store";
 
-function AddTrigger() {
+function AddTrigger({ onClose }: { onClose: () => void }) {
   const { setTrigger } = useTriggerStore();
-  const [openModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const router = useRouter();
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  const innerModalRef = useRef<HTMLDivElement>(null);
+  // Detect click outside the inner modal
+  // const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+  //   if (
+  //     innerModalRef.current &&
+  //     !innerModalRef.current.contains(event.target as Node)
+  //   ) {
+  //     onClose(); // 🔥 closes AddTrigger modal
+  //   }
+  // };
+  const handleOnClickOuter = (e: HTMLDivElement) => {
+    const element = e;
+
+    if (element === modalRef.current) {
+      onClose();
+    }
+  };
+
   return createPortal(
-    <div className="fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-black/70 px-2 duration-200">
+    <div
+      ref={modalRef}
+      onClick={(e) => handleOnClickOuter(e.currentTarget)}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-2 duration-200"
+    >
       <motion.div
-        initial={{
-          opacity: 0,
-          filter: "blur(20px)",
-        }}
-        whileInView={{
-          opacity: 1,
-          filter: "blur(0px)",
-        }}
-        transition={{
-          duration: 0.3,
-          ease: "easeInOut",
-        }}
+        ref={innerModalRef}
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, filter: "blur(20px)" }}
+        animate={{ opacity: 1, filter: "blur(0px)" }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
         className="border border-dashed border-neutral-800 bg-black p-2"
       >
         <div className="w-md relative divide-y divide-neutral-800 border border-neutral-800">
+          {/* Decorative corners */}
           <Square
             size={8}
             className="absolute -right-2 -top-2 bg-neutral-600"
@@ -44,14 +61,17 @@ function AddTrigger() {
             size={8}
             className="absolute -bottom-2 -left-2 bg-neutral-600"
           />
+
           <span className="flex w-full px-4 py-2 text-sm font-medium text-neutral-400">
             Add a trigger
           </span>
+
           <div className="flex flex-col gap-2 bg-black py-5">
             <div
               onClick={() => {
                 router.push("/workflow");
                 setTrigger("manual");
+                onClose();
               }}
               className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
             >
@@ -63,11 +83,12 @@ function AddTrigger() {
                 Start runs by clicking the run button
               </span>
             </div>
+
             <div
               onClick={() => {
                 router.push("/workflow");
                 setTrigger("webhook");
-                // alert(`Trigger clicked now ${trigger} `);
+                onClose();
               }}
               className="flex flex-col items-start gap-2 rounded-xl px-3 py-3 hover:bg-neutral-950"
             >
@@ -76,17 +97,11 @@ function AddTrigger() {
                 <span className="text-white">Webhook</span>
               </div>
               <span className="text-sm text-neutral-500">
-                Start runs when by sending emails to a unique HTTP requests
+                Start runs when a request hits the webhook URL
               </span>
             </div>
-            {openModal && (
-              <Modal
-                choosenAction={actionsData["webhook"]}
-                onClose={() => {
-                  router.push("/workflow");
-                }}
-              />
-            )}
+
+            {openModal && <Modal onClose={() => setOpenModal(false)} />}
           </div>
         </div>
       </motion.div>

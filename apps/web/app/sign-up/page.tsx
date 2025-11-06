@@ -5,6 +5,7 @@ import Container from "../../components/container";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const SIGNUP_URL = "http://localhost:8080/api/v0/auth/signup";
 
@@ -22,7 +23,6 @@ function SignUpPage() {
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    alert("Btn has been clicked");
     e.preventDefault();
     try {
       const response = await axios.post(SIGNUP_URL, signUpData, {
@@ -30,10 +30,19 @@ function SignUpPage() {
           "Content-Type": "application/json",
         },
       });
-      const data = response.data;
-      localStorage.setItem("token", data.jwt);
-      router.push("/");
+
+      if (response.status === 200 && response.data?.jwt) {
+        const data = response.data;
+        localStorage.setItem("token", data.jwt);
+        toast.success("Account created successfully!");
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
+      } else {
+        toast.error("Signup failed. Invalid response from server.");
+      }
     } catch (error) {
+      toast.error("Signup failed. Please try again.");
       console.error("Creating new account failed", error);
     }
   }

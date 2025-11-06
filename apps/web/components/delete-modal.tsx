@@ -1,6 +1,7 @@
 import axios from "axios";
 import { createPortal } from "react-dom";
 import { useAllWorkflowStore } from "../stores/workflow-store";
+import { useRef } from "react";
 
 type DeleteModalType = {
   //   setModalDelete: (deleteModal: boolean) => void;
@@ -53,9 +54,31 @@ function DeleteModal({
   const { savedWorkflow } = useAllWorkflowStore();
   console.log("This are the saved savedWorkflow", savedWorkflow);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const innerModalRef = useRef<HTMLDivElement>(null);
+
+  const handleOnClickOuter = (e: HTMLDivElement) => {
+    const element = e;
+
+    if (element === modalRef.current) {
+      // if (modalClose) {
+      //   modalClose(false);
+      // }
+      onClose();
+    }
+  };
+
   return createPortal(
-    <div className="backdrop-blur-xs fixed inset-0 z-20 flex items-center justify-center">
-      <div className="w-md rounded-sm border border-neutral-800 bg-black p-7">
+    <div
+      ref={modalRef}
+      onClick={(e) => handleOnClickOuter(e.currentTarget)}
+      className="backdrop-blur-xs fixed inset-0 z-20 flex items-center justify-center"
+    >
+      <div
+        ref={innerModalRef}
+        onClick={(e) => e.stopPropagation()}
+        className="w-md rounded-sm border border-neutral-800 bg-black p-7"
+      >
         <div className="mb-4 flex flex-col gap-3">
           <span className="text-xl text-neutral-300">Are you sure ?</span>
           <span className="text-sm text-neutral-500">

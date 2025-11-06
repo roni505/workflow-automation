@@ -2,39 +2,27 @@
 
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-// import { ToastContainer,toast } from "react-toastify";
+import { toast, Toaster } from "sonner";
 
 function Logout() {
   const router = useRouter();
 
   const handleLogout = () => {
-    // const loadingToast = toast.loading("Logging you out...");
+    localStorage.removeItem("token");
+    toast.success("Logged out successfully");
 
     setTimeout(() => {
-      localStorage.removeItem("token");
-      //   toast.update(loadingToast, {
-      //     render: "Logged out successfully!",
-      //     type: "success",
-      //     isLoading: false,
-      //     autoClose: 1500,
-      //     onClose: () => router.push("/")
-      //   });
       router.push("/login");
-    }, 2000);
+    }, 1500);
   };
 
   return (
-    <div>
-      <button>
-        <LogOut
-          size={24}
-          onClick={handleLogout}
-          color="#A10000"
-          strokeWidth={2}
-        />
-      </button>
-      {/* <ToastContainer position="top-center" /> */}
-    </div>
+    <button
+      onClick={handleLogout}
+      className="flex items-center gap-2 transition hover:opacity-80"
+    >
+      <LogOut size={22} color="#A10000" strokeWidth={2} />
+    </button>
   );
 }
 

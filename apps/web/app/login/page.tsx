@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import Container from "../../components/container";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast, Toaster } from "sonner";
 
 const LOGIN_URL = "http://localhost:8080/api/v0/auth/login";
 
@@ -17,7 +18,6 @@ function Login() {
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
-    alert("Login button has been clicked");
     e.preventDefault();
     try {
       const response = await axios.post(LOGIN_URL, loginData, {
@@ -25,10 +25,19 @@ function Login() {
           "Content-Type": "application/json",
         },
       });
-      const data = response.data;
-      localStorage.setItem("token", data.jwt);
-      router.push("/");
+
+      if (response.status === 200 && response.data?.jwt) {
+        const data = response.data;
+        localStorage.setItem("token", data.jwt);
+        toast.success("Login successful!");
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
+      } else {
+        toast.error("Login failed. Invalid response from server.");
+      }
     } catch (error) {
+      toast.error("Login failed. Please check your credentials.");
       console.error("login failed", error);
     }
   }
@@ -36,8 +45,18 @@ function Login() {
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setLoginData({ ...loginData, [e.target.name]: e.target.value });
   }
+
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-black">
+      <Toaster
+        toastOptions={{
+          style: {
+            background: "#111111",
+            color: "#fff",
+            border: "1px solid #27272a",
+          },
+        }}
+      />
       <Container className="p-4">
         <div className="flex flex-col gap-2 pb-7">
           <div className="text-2xl text-white">Login to Your Account</div>

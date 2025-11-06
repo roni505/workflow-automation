@@ -1,7 +1,7 @@
 "use client";
 
 import { Square } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EdgeData, NodeData, useNodeStore } from "../stores/node-store";
 import { useActionFormStore } from "../stores/action-form-store";
@@ -46,15 +46,15 @@ export const credentialsData = {
 
 export interface AddStepClicked {
   onNodeCreated?: (config: any, formValues: { [key: string]: string }) => void;
-
   isAddStepClicked?: boolean;
   setIsAddStepClicked?: (value: boolean) => void;
+  modalClose?: (state: boolean) => void;
 }
 
 function Actions({
   isAddStepClicked,
   setIsAddStepClicked,
-  onNodeCreated,
+  modalClose,
 }: AddStepClicked) {
   const { isActionAdded, setIsActionAdded } = useActionFormStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -63,11 +63,37 @@ function Actions({
   const [added, setAdded] = useState(false);
   const [selectedAction, setSelectedAction] = useState("");
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  const innerModalRef = useRef<HTMLDivElement>(null);
+
+  const handleOnClickOuter = (e: HTMLDivElement) => {
+    const element = e;
+
+    if (element === modalRef.current) {
+      // alert("hey i have been clicked");
+      // if (modalClose) {
+      //   modalClose(!isOpen);
+      // }
+      // setIsOpen(!isOpen);
+      // if (setIsAddStepClicked) {
+      //   setIsAddStepClicked(!isAddStepClicked);
+      // }
+      // setSelectedAction(key);
+      // setAdded(!added);
+    }
+  };
+
   return createPortal(
     <div>
       {!added && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div
+          ref={modalRef}
+          onClick={(e) => handleOnClickOuter(e.currentTarget)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
+        >
           <motion.div
+            ref={innerModalRef}
+            onClick={(e) => e.stopPropagation()}
             initial={{
               opacity: 0,
               filter: "blur(20px)",

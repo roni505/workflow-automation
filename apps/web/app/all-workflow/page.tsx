@@ -38,7 +38,7 @@ function AllWorkflows() {
         <div className="flex w-full justify-between">
           <span className="text-2xl">Workflows</span>
           <TriggerBtn size="small" isOpen={isOpen} setIsOpen={setIsOpen} />
-          {isOpen ? <AddTrigger /> : ""}
+          {isOpen ? <AddTrigger onClose={() => setIsOpen(false)} /> : ""}
         </div>
         <div className="grid grid-cols-3 gap-3">
           {savedWorkflow.map((workflow) => (

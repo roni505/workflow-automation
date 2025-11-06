@@ -97,7 +97,7 @@ export const credentialsData = {
 
 type ModalProps = {
   // this works beacuse (telegram, whatsapp, ai) all has same structure
-  choosenAction: (typeof actionsData)["email"];
+  choosenAction?: (typeof actionsData)["email"];
   onClose: (
     fromData?: Record<string, string>,
     selectedCredentialId?: string,
